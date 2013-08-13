@@ -1,0 +1,19 @@
+digraph {
+//PROCESS_FREIGHT_PAYMENT 
+	inputcondition_3885[shape=circle, color=green];
+	inputcondition_3885->_inputcondition_3885_Ynet[label=in_1_];
+	inputcondition_3885->_inputcondition_3885_to_be_done_processfreightpayment_30[label=out_1_];
+	outputcondition_3886[shape=circle, color=green];
+	outputcondition_3886->_to_be_done_processfreightpayment_30_outputcondition_3886[label=in_1_];
+	outputcondition_3886->_outputcondition_3886_Ynet[label=out_1_];
+	to_be_done_processfreightpayment_30[shape=box];
+	to_be_done_processfreightpayment_30->_inputcondition_3885_to_be_done_processfreightpayment_30[label=start];
+	to_be_done_processfreightpayment_30->_to_be_done_processfreightpayment_30_outputcondition_3886[label=end];
+	Ynet[shape=circle, color=yellow];
+	Ynet->_inputcondition_3885_Ynet[label=i_cond];
+	Ynet->_outputcondition_3886_Ynet[label=o_cond];
+	_inputcondition_3885_Ynet [shape=point];
+	_outputcondition_3886_Ynet [shape=point];
+	_inputcondition_3885_to_be_done_processfreightpayment_30 [shape=point];
+	_to_be_done_processfreightpayment_30_outputcondition_3886 [shape=point];
+}

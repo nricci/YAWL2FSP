@@ -1,0 +1,14 @@
+digraph {
+	// RETURN_MANAGEMENT
+
+	// Elements
+	t29 [shape=box];
+	c13 [shape=circle][label=O];
+	c1 [shape=circle][label=I];
+
+	// Arrows
+	c1->t29;
+	t29->c13;
+	t29->c1[color=red];
+	c13->t29[color=red];
+}

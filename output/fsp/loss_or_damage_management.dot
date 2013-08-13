@@ -1,0 +1,19 @@
+digraph {
+//LOSS_OR_DAMAGE_MANAGEMENT 
+	loss_or_damage_management_4052[shape=box];
+	loss_or_damage_management_4052->_inputcondition_4050_loss_or_damage_management_4052[label=start];
+	loss_or_damage_management_4052->_loss_or_damage_management_4052_outputcondition_4051[label=end];
+	inputcondition_4050[shape=circle, color=green];
+	inputcondition_4050->_inputcondition_4050_Ynet[label=in_1_];
+	inputcondition_4050->_inputcondition_4050_loss_or_damage_management_4052[label=out_1_];
+	outputcondition_4051[shape=circle, color=green];
+	outputcondition_4051->_loss_or_damage_management_4052_outputcondition_4051[label=in_1_];
+	outputcondition_4051->_outputcondition_4051_Ynet[label=out_1_];
+	Ynet[shape=circle, color=yellow];
+	Ynet->_inputcondition_4050_Ynet[label=i_cond];
+	Ynet->_outputcondition_4051_Ynet[label=o_cond];
+	_inputcondition_4050_Ynet [shape=point];
+	_outputcondition_4051_Ynet [shape=point];
+	_inputcondition_4050_loss_or_damage_management_4052 [shape=point];
+	_loss_or_damage_management_4052_outputcondition_4051 [shape=point];
+}

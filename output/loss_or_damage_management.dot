@@ -1,0 +1,14 @@
+digraph {
+	// LOSS_OR_DAMAGE_MANAGEMENT
+
+	// Elements
+	t28 [shape=box];
+	c31 [shape=circle][label=I];
+	c12 [shape=circle][label=O];
+
+	// Arrows
+	c31->t28;
+	t28->c12;
+	t28->c31[color=red];
+	c12->t28[color=red];
+}

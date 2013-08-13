@@ -1,0 +1,35 @@
+digraph {
+	// ORDERING
+
+	// Elements
+	t47 [shape=box];
+	t49 [shape=box];
+	t27 [shape=box];
+	t16 [shape=box];
+	t57 [shape=box];
+	c21 [shape=circle][label=O];
+	c6 [shape=circle][label=I];
+	c9 [shape=circle];
+
+	// Arrows
+	c6->t49;
+	t49->t16;
+	t49->c6[color=red];
+	t16->c9;
+	t16->c21;
+	t16->t49[color=red];
+	t16->t57[color=red];
+	c21->t16[color=red];
+	c21->t27[color=red];
+	c21->t47[color=red];
+	c9->t47;
+	c9->t57;
+	c9->t27;
+	c9->t16[color=red];
+	t27->c21;
+	t27->c9[color=red];
+	t57->t16;
+	t57->c9[color=red];
+	t47->c21;
+	t47->c9[color=red];
+}

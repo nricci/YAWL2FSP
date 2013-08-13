@@ -1,0 +1,360 @@
+XOR_SPLIT(N=2) = (
+	in -> SPLITING 
+	|o_cond -> XOR_SPLIT
+),
+SPLITING = (
+	out[1..N] -> XOR_SPLIT
+	| default_out -> XOR_SPLIT
+	| o_cond -> XOR_SPLIT
+).
+
+CONDITION(N=2,M=2) = (
+	in[1..N] -> out[1..M] -> CONDITION
+).
+
+TASK = (start -> end -> TASK).
+
+AND_JOIN_COMPONENT(I=1) = (
+	in[I] -> JOINING
+	|o_cond -> AND_JOIN_COMPONENT
+),
+JOINING = (
+	out -> AND_JOIN_COMPONENT
+	|o_cond -> AND_JOIN_COMPONENT
+).
+|| AND_JOIN(N=2) = (
+	forall [i:1..N] AND_JOIN_COMPONENT(i)
+).
+
+XOR_JOIN(N=2) = (
+	in[1..N] -> JOINING
+	|o_cond -> XOR_JOIN
+),
+JOINING = (
+	out -> XOR_JOIN
+	|o_cond -> XOR_JOIN
+).
+
+OR_SPLIT_TRIGGER(I=1) = (
+	in -> TRIGGERING
+	|o_cond -> OR_SPLIT_TRIGGER
+),
+TRIGGERING = (
+	out[I] -> OR_SPLIT_TRIGGER
+	|abort[I] -> OR_SPLIT_TRIGGER
+	|o_cond -> OR_SPLIT_TRIGGER
+).
+OR_SPLIT_DEFAULT_TRIGGER(N=2) = (
+	in -> OR_SPLIT_DEFAULT_TRIGGER_DEF[0][0]
+	|o_cond -> OR_SPLIT_DEFAULT_TRIGGER
+	),
+OR_SPLIT_DEFAULT_TRIGGER_DEF[i:0..N][j:0..N] = (
+	o_cond -> OR_SPLIT_DEFAULT_TRIGGER
+	|when (i+j<N) abort[k:1..N] -> OR_SPLIT_DEFAULT_TRIGGER_DEF[i+1][j]
+	|when (i+j<N) out[k:1..N] -> OR_SPLIT_DEFAULT_TRIGGER_DEF[i][j+1]
+	|when (i+j==N && j==0) default_out -> OR_SPLIT_DEFAULT_TRIGGER
+	|when (i+j==N && j!=0) invisible-> OR_SPLIT_DEFAULT_TRIGGER
+).
+||OR_SPLIT(N=2) = (
+	forall [i:1..N] OR_SPLIT_TRIGGER(i)
+	||OR_SPLIT_DEFAULT_TRIGGER(N) 
+).
+
+YNET = (i_cond -> o_cond -> YNET).
+
+AND_SPLIT_COMPONENT(I=1) = (
+	in -> TRIGGERING
+	|o_cond -> AND_SPLIT_COMPONENT
+),
+TRIGGERING = (
+	out[I] -> AND_SPLIT_COMPONENT
+	|o_cond -> AND_SPLIT_COMPONENT
+).
+||AND_SPLIT(N=2) = (
+	forall[i:1..N] AND_SPLIT_COMPONENT(i)
+).
+
+TRSH_OR_JOIN(N=2,T=1) = TRSH_OR_JOIN_DEF[0],
+TRSH_OR_JOIN_DEF[b:0..N] = (
+	 o_cond -> TRSH_OR_JOIN
+	 | in[1..N] -> TRSH_OR_JOIN_DEF[b+1]
+	 | when (b>=T) out -> TRSH_OR_JOIN
+).
+
+||NEW_NET_1 = (
+		mrg_4_join : XOR_JOIN(4)
+	||	dificult_116 : EXTRANET
+	||	b_6 : B_6_DECOMP
+	||	a_5 : A_5_DECOMP
+	||	outputcondition_2 : CONDITION(1,1)
+	||	c_7 : C_7_DECOMP
+	||	spl_3_split : XOR_SPLIT(3)
+	||	mrg_4 : TASK
+	||	spl_3 : TASK
+	||	inputcondition_1 : CONDITION(1,1)
+	||	ynet : YNET
+) / {
+	_c_7_mrg_4_join/mrg_4_join.in[1],
+	_dificult_116_mrg_4_join/mrg_4_join.in[2],
+	_b_6_mrg_4_join/mrg_4_join.in[3],
+	_a_5_mrg_4_join/mrg_4_join.in[4],
+	_mrg_4_mrg_4_join/mrg_4_join.out,
+	_spl_3_split_Ynet_mrg_4_join_outputcondition_2/mrg_4_join.o_cond,
+
+	_spl_3_split_dificult_116/dificult_116._inputcondition_117_Ynet,
+	_dificult_116_mrg_4_join/dificult_116._outputcondition_118_Ynet,
+
+	_spl_3_split_b_6/b_6._input_condition_Ynet,
+	_b_6_mrg_4_join/b_6._output_condition_Ynet_spliter1_split_spliter2_split_merger_join,
+
+	_spl_3_split_a_5/a_5._input_condition_Ynet,
+	_a_5_mrg_4_join/a_5._output_condition_Ynet_spliter_split_merger_join,
+
+	_mrg_4_outputcondition_2/outputcondition_2.in[1],
+	_spl_3_split_Ynet_mrg_4_join_outputcondition_2/outputcondition_2.out[1],
+
+	_spl_3_split_c_7/c_7._input_condition_Ynet,
+	_c_7_mrg_4_join/c_7._output_condition_Ynet_spliter1_split_spliter2_split_merger_join,
+
+	_spl_3_spl_3_split/spl_3_split.in,
+	_spl_3_split_dificult_116/spl_3_split.default_out,
+	_spl_3_split_c_7/spl_3_split.out[1],
+	_spl_3_split_b_6/spl_3_split.out[2],
+	_spl_3_split_a_5/spl_3_split.out[3],
+	_spl_3_split_Ynet_mrg_4_join_outputcondition_2/spl_3_split.o_cond,
+
+	_mrg_4_mrg_4_join/mrg_4.start,
+	_mrg_4_outputcondition_2/mrg_4.end,
+
+	_inputcondition_1_spl_3/spl_3.start,
+	_spl_3_spl_3_split/spl_3.end,
+
+	_inputcondition_1_Ynet/inputcondition_1.in[1],
+	_inputcondition_1_spl_3/inputcondition_1.out[1],
+
+	_inputcondition_1_Ynet/ynet.i_cond,
+	_spl_3_split_Ynet_mrg_4_join_outputcondition_2/ynet.o_cond
+}.
+
+||C_7_DECOMP = (
+		merger_join : TRSH_OR_JOIN(5,2)
+	||	multi5 : TASK
+	||	multi2 : TASK
+	||	multi1 : TASK
+	||	multi4 : TASK
+	||	output_condition : CONDITION(1,1)
+	||	multi3 : TASK
+	||	merger : TASK
+	||	spliter1_split : AND_SPLIT(2)
+	||	spliter2 : TASK
+	||	spliter1 : TASK
+	||	ynet : YNET
+	||	input_condition : CONDITION(1,1)
+	||	spliter2_split : OR_SPLIT(3)
+) / {
+	_multi_1_merger_join/merger_join.in[1],
+	_multi_2_merger_join/merger_join.in[2],
+	_multi_3_merger_join/merger_join.in[3],
+	_multi_4_merger_join/merger_join.in[4],
+	_multi_5_merger_join/merger_join.in[5],
+	_merger_join_merger/merger_join.out,
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/merger_join.o_cond,
+
+	_multi_5_spliter2_split/multi5.start,
+	_multi_5_merger_join/multi5.end,
+
+	_multi_2_spliter2_split/multi2.start,
+	_multi_2_merger_join/multi2.end,
+
+	_multi_1_spliter1_split/multi1.start,
+	_multi_1_merger_join/multi1.end,
+
+	_multi_4_spliter2_split/multi4.start,
+	_multi_4_merger_join/multi4.end,
+
+	_merger_output_condition/output_condition.in[1],
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/output_condition.out[1],
+
+	_multi_3_spliter2_split/multi3.start,
+	_multi_3_merger_join/multi3.end,
+
+	_merger_join_merger/merger.start,
+	_merger_output_condition/merger.end,
+
+	_spliter1_split_spliter1/spliter1_split.in,
+	_multi_1_spliter1_split/spliter1_split.out[1],
+	_spliter2_spliter1_split/spliter1_split.out[2],
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/spliter1_split.o_cond,
+
+	_spliter2_spliter1_split/spliter2.start,
+	_spliter2_split_spliter2/spliter2.end,
+
+	_spliter1_input_condition/spliter1.start,
+	_spliter1_split_spliter1/spliter1.end,
+
+	_input_condition_Ynet/ynet.i_cond,
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/ynet.o_cond,
+
+	_input_condition_Ynet/input_condition.in[1],
+	_spliter1_input_condition/input_condition.out[1],
+
+	_spliter2_split_spliter2/spliter2_split.in,
+	_multi_5_spliter2_split/spliter2_split.default_out,
+	_multi_2_spliter2_split/spliter2_split.out[1],
+	_multi_3_spliter2_split/spliter2_split.out[2],
+	_multi_4_spliter2_split/spliter2_split.out[3],
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/spliter2_split.o_cond
+}>> {
+	_merger_join_merger
+}.
+
+||A_5_DECOMP = (
+		merger_join : AND_JOIN(4)
+	||	multi2 : TASK
+	||	multi1 : TASK
+	||	spliter : TASK
+	||	multi4 : TASK
+	||	multi3 : TASK
+	||	output_condition : CONDITION(1,1)
+	||	merger : TASK
+	||	spliter_split : AND_SPLIT(4)
+	||	input_condition : CONDITION(1,1)
+	||	ynet : YNET
+) / {
+	_multi_1_merger_join/merger_join.in[1],
+	_multi_2_merger_join/merger_join.in[2],
+	_multi_3_merger_join/merger_join.in[3],
+	_multi_4_merger_join/merger_join.in[4],
+	_merger_join_merger/merger_join.out,
+	_output_condition_Ynet_spliter_split_merger_join/merger_join.o_cond,
+
+	_multi_2_spliter_split/multi2.start,
+	_multi_2_merger_join/multi2.end,
+
+	_multi_1_spliter_split/multi1.start,
+	_multi_1_merger_join/multi1.end,
+
+	_spliter_input_condition/spliter.start,
+	_spliter_split_spliter/spliter.end,
+
+	_multi_4_spliter_split/multi4.start,
+	_multi_4_merger_join/multi4.end,
+
+	_multi_3_spliter_split/multi3.start,
+	_multi_3_merger_join/multi3.end,
+
+	_merger_output_condition/output_condition.in[1],
+	_output_condition_Ynet_spliter_split_merger_join/output_condition.out[1],
+
+	_merger_join_merger/merger.start,
+	_merger_output_condition/merger.end,
+
+	_spliter_split_spliter/spliter_split.in,
+	_multi_1_spliter_split/spliter_split.out[1],
+	_multi_2_spliter_split/spliter_split.out[2],
+	_multi_3_spliter_split/spliter_split.out[3],
+	_multi_4_spliter_split/spliter_split.out[4],
+	_output_condition_Ynet_spliter_split_merger_join/spliter_split.o_cond,
+
+	_input_condition_Ynet/input_condition.in[1],
+	_spliter_input_condition/input_condition.out[1],
+
+	_input_condition_Ynet/ynet.i_cond,
+	_output_condition_Ynet_spliter_split_merger_join/ynet.o_cond
+}.
+
+||B_6_DECOMP = (
+		merger_join : TRSH_OR_JOIN(5,5)
+	||	multi5 : TASK
+	||	multi2 : TASK
+	||	multi1 : TASK
+	||	multi4 : TASK
+	||	output_condition : CONDITION(1,1)
+	||	multi3 : TASK
+	||	merger : TASK
+	||	spliter1_split : AND_SPLIT(2)
+	||	spliter2 : TASK
+	||	spliter1 : TASK
+	||	ynet : YNET
+	||	input_condition : CONDITION(1,1)
+	||	spliter2_split : OR_SPLIT(3)
+) / {
+	_multi_1_merger_join/merger_join.in[1],
+	_multi_2_merger_join/merger_join.in[2],
+	_multi_3_merger_join/merger_join.in[3],
+	_multi_4_merger_join/merger_join.in[4],
+	_multi_5_merger_join/merger_join.in[5],
+	_merger_join_merger/merger_join.out,
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/merger_join.o_cond,
+
+	_multi_5_spliter2_split/multi5.start,
+	_multi_5_merger_join/multi5.end,
+
+	_multi_2_spliter2_split/multi2.start,
+	_multi_2_merger_join/multi2.end,
+
+	_multi_1_spliter1_split/multi1.start,
+	_multi_1_merger_join/multi1.end,
+
+	_multi_4_spliter2_split/multi4.start,
+	_multi_4_merger_join/multi4.end,
+
+	_merger_output_condition/output_condition.in[1],
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/output_condition.out[1],
+
+	_multi_3_spliter2_split/multi3.start,
+	_multi_3_merger_join/multi3.end,
+
+	_merger_join_merger/merger.start,
+	_merger_output_condition/merger.end,
+
+	_spliter1_split_spliter1/spliter1_split.in,
+	_multi_1_spliter1_split/spliter1_split.out[1],
+	_spliter2_spliter1_split/spliter1_split.out[2],
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/spliter1_split.o_cond,
+
+	_spliter2_spliter1_split/spliter2.start,
+	_spliter2_split_spliter2/spliter2.end,
+
+	_spliter1_input_condition/spliter1.start,
+	_spliter1_split_spliter1/spliter1.end,
+
+	_input_condition_Ynet/ynet.i_cond,
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/ynet.o_cond,
+
+	_input_condition_Ynet/input_condition.in[1],
+	_spliter1_input_condition/input_condition.out[1],
+
+	_spliter2_split_spliter2/spliter2_split.in,
+	_multi_5_spliter2_split/spliter2_split.default_out,
+	_multi_2_spliter2_split/spliter2_split.out[1],
+	_multi_3_spliter2_split/spliter2_split.out[2],
+	_multi_4_spliter2_split/spliter2_split.out[3],
+	_output_condition_Ynet_spliter1_split_spliter2_split_merger_join/spliter2_split.o_cond
+}>> {
+	_merger_join_merger
+}.
+
+||EXTRANET = (
+		null_120 : TASK
+	||	null_119 : TASK
+	||	inputcondition_117 : CONDITION(1,1)
+	||	outputcondition_118 : CONDITION(1,1)
+	||	ynet : YNET
+) / {
+	_null_119_null_120/null_120.start,
+	_null_120_outputcondition_118/null_120.end,
+
+	_inputcondition_117_null_119/null_119.start,
+	_null_119_null_120/null_119.end,
+
+	_inputcondition_117_Ynet/inputcondition_117.in[1],
+	_inputcondition_117_null_119/inputcondition_117.out[1],
+
+	_null_120_outputcondition_118/outputcondition_118.in[1],
+	_outputcondition_118_Ynet/outputcondition_118.out[1],
+
+	_inputcondition_117_Ynet/ynet.i_cond,
+	_outputcondition_118_Ynet/ynet.o_cond
+}.
+

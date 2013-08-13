@@ -1,0 +1,14 @@
+digraph {
+	// PROCESS_FREIGHT_PAYMENT
+
+	// Elements
+	t14 [shape=box];
+	c30 [shape=circle][label=I];
+	c10 [shape=circle][label=O];
+
+	// Arrows
+	c30->t14;
+	t14->c10;
+	t14->c30[color=red];
+	c10->t14[color=red];
+}

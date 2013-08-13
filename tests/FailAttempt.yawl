@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<specificationSet xmlns="http://www.yawlfoundation.org/yawlschema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2" xsi:schemaLocation="http://www.yawlfoundation.org/yawlschema http://www.yawlfoundation.org/yawlschema/YAWL_Schema2.2.xsd">
+  <specification uri="FailAttempt">
+    <metaData>
+      <title>FailAttempt</title>
+      <creator>nicolas</creator>
+      <description>No description has been given.</description>
+      <version>0.1</version>
+      <persistent>false</persistent>
+      <identifier>UID_a1ddaffc-e0a6-43c3-acd3-76d06e7da195</identifier>
+    </metaData>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" />
+    <decomposition id="New_Net_1" isRootNet="true" xsi:type="NetFactsType">
+      <processControlElements>
+        <inputCondition id="InputCondition_1">
+          <flowsInto>
+            <nextElementRef id="gs_45" />
+          </flowsInto>
+        </inputCondition>
+        <task id="gs_45">
+          <name>gs</name>
+          <flowsInto>
+            <nextElementRef id="c3_63" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="c2_55" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="c1_59" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <condition id="c3_63">
+          <name>c3</name>
+          <flowsInto>
+            <nextElementRef id="t3_47" />
+          </flowsInto>
+        </condition>
+        <condition id="c2_55">
+          <name>c2</name>
+          <flowsInto>
+            <nextElementRef id="t2_46" />
+          </flowsInto>
+        </condition>
+        <condition id="c1_59">
+          <name>c1</name>
+          <flowsInto>
+            <nextElementRef id="t1_60" />
+          </flowsInto>
+        </condition>
+        <task id="t2_46">
+          <name>t2</name>
+          <flowsInto>
+            <nextElementRef id="lm_61" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <task id="t3_47">
+          <name>t3</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_2" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <removesTokens id="c1_59" />
+          <removesTokens id="c2_55" />
+          <removesTokens id="lm_61" />
+          <removesTokens id="t1_60" />
+          <removesTokens id="t2_46" />
+          <removesTokensFromFlow>
+            <flowSource id="t2_46" />
+            <flowDestination id="lm_61" />
+          </removesTokensFromFlow>
+          <removesTokensFromFlow>
+            <flowSource id="t1_60" />
+            <flowDestination id="lm_61" />
+          </removesTokensFromFlow>
+        </task>
+        <task id="t1_60">
+          <name>t1</name>
+          <flowsInto>
+            <nextElementRef id="lm_61" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <task id="lm_61">
+          <name>lm</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_2" />
+          </flowsInto>
+          <join code="and" />
+          <split code="and" />
+          <removesTokens id="c3_63" />
+          <removesTokens id="t3_47" />
+        </task>
+        <outputCondition id="OutputCondition_2" />
+      </processControlElements>
+    </decomposition>
+  </specification>
+  <layout>
+    <locale language="es" country="ES" />
+    <specification id="FailAttempt">
+      <size w="615" h="323" />
+      <net id="New_Net_1">
+        <bounds x="0" y="0" w="1737" h="697" />
+        <frame x="11" y="33" w="1741" h="701" />
+        <viewport x="0" y="0" w="1741" h="701" />
+        <vertex id="InputCondition_1">
+          <attributes>
+            <bounds x="724,0" y="24,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <vertex id="OutputCondition_2">
+          <attributes>
+            <bounds x="724,0" y="560,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <container id="gs_45">
+          <vertex>
+            <attributes>
+              <bounds x="724,0" y="104,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <decorator type="AND_split">
+            <position>11</position>
+            <attributes>
+              <bounds x="724,0" y="135,0" w="32,0" h="11,0" />
+              <size w="32" h="11" />
+            </attributes>
+          </decorator>
+          <label>
+            <attributes>
+              <bounds x="692,0" y="148,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <flow source="gs_45" target="c3_63">
+          <ports in="1" out="10" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="747,3" y="145,0" />
+              <value x="907,5" y="224,0" />
+            </points>
+          </attributes>
+        </flow>
+        <flow source="t3_47" target="OutputCondition_2">
+          <ports in="11" out="10" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <flow source="t2_46" target="lm_61">
+          <ports in="11" out="3" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="627,5" y="243,0" />
+              <value x="627,3" y="354,0" />
+            </points>
+          </attributes>
+        </flow>
+        <flow source="InputCondition_1" target="gs_45">
+          <ports in="11" out="10" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="750,5" y="55,0" />
+              <value x="750,5" y="104,0" />
+            </points>
+          </attributes>
+        </flow>
+        <container id="lm_61">
+          <vertex>
+            <attributes>
+              <bounds x="608,0" y="384,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <decorator type="AND_join">
+            <position>10</position>
+            <attributes>
+              <bounds x="608,0" y="374,0" w="32,0" h="11,0" />
+              <size w="32" h="11" />
+            </attributes>
+          </decorator>
+          <label>
+            <attributes>
+              <bounds x="576,0" y="416,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <flow source="gs_45" target="c1_59">
+          <ports in="3" out="10" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="731,8" y="145,0" />
+              <value x="567,5" y="204,0" />
+            </points>
+          </attributes>
+        </flow>
+        <flow source="gs_45" target="c2_55">
+          <ports in="2" out="10" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="739,5" y="145,0" />
+              <value x="659,5" y="200,0" />
+            </points>
+          </attributes>
+        </flow>
+        <flow source="c2_55" target="t2_46">
+          <ports in="11" out="10" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="583,5" y="187,0" />
+              <value x="627,5" y="212,0" />
+            </points>
+          </attributes>
+        </flow>
+        <flow source="c1_59" target="t1_60">
+          <ports in="11" out="10" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="548,5" y="203,0" />
+              <value x="548,5" y="288,0" />
+            </points>
+          </attributes>
+        </flow>
+        <flow source="t1_60" target="lm_61">
+          <ports in="11" out="3" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="539,5" y="275,0" />
+              <value x="627,3" y="354,0" />
+            </points>
+          </attributes>
+        </flow>
+        <flow source="lm_61" target="OutputCondition_2">
+          <ports in="11" out="10" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="619,5" y="395,0" />
+              <value x="739,5" y="560,0" />
+            </points>
+          </attributes>
+        </flow>
+        <flow source="c3_63" target="t3_47">
+          <ports in="11" out="10" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+            <points>
+              <value x="920,5" y="219,0" />
+              <value x="920,5" y="316,0" />
+            </points>
+          </attributes>
+        </flow>
+        <container id="c1_59">
+          <vertex>
+            <attributes>
+              <bounds x="580,0" y="204,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <label>
+            <attributes>
+              <bounds x="548,0" y="236,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <container id="c2_55">
+          <vertex>
+            <attributes>
+              <bounds x="668,0" y="200,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <label>
+            <attributes>
+              <bounds x="636,0" y="232,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <container id="c3_63">
+          <vertex>
+            <attributes>
+              <bounds x="844,0" y="208,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <label>
+            <attributes>
+              <bounds x="812,0" y="240,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <container id="t1_60">
+          <vertex>
+            <attributes>
+              <bounds x="580,0" y="288,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <label>
+            <attributes>
+              <bounds x="548,0" y="320,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <container id="t2_46">
+          <vertex>
+            <attributes>
+              <bounds x="668,0" y="288,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <label>
+            <attributes>
+              <bounds x="636,0" y="320,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <container id="t3_47">
+          <vertex>
+            <attributes>
+              <bounds x="844,0" y="304,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <label>
+            <attributes>
+              <bounds x="812,0" y="336,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+      </net>
+    </specification>
+  </layout>
+</specificationSet>
+
+

@@ -1,0 +1,2556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<specificationSet xmlns="http://www.yawlfoundation.org/yawlschema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1" xsi:schemaLocation="http://www.yawlfoundation.org/yawlschema http://www.yawlfoundation.org/yawlschema/YAWL_Schema2.1.xsd">
+  <specification uri="orderfulfillment">
+    <metaData>
+      <title>Order Fulfillment</title>
+      <creator>Stephan Clemens,Marcello La Rosa and Arthur ter Hofstede</creator>
+      <description>Order Fulfillment Workflow Model</description>
+      <version>1.2</version>
+      <persistent>false</persistent>
+      <identifier>UID_ae0b797c-2ac8-4d5e-9421-ece89d8043d0</identifier>
+    </metaData>
+    
+    
+    
+    <decomposition id="Overall" isRootNet="true" xsi:type="NetFactsType">
+    <processControlElements>
+        <inputCondition id="InputCondition_1">
+          <flowsInto>
+            <nextElementRef id="Ordering_3" />
+          </flowsInto>
+        </inputCondition>
+        <task id="Ordering_3">
+          <name>Ordering</name>
+          <flowsInto>
+            <nextElementRef id="Carrier_Appointment_4" />
+            <predicate ordering="0">/Overall/PO_timedout/text()='false' and /Overall/POApproval/text()='true'</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_2" />
+            <isDefaultFlow />
+          </flowsInto>
+          <join code="xor" />
+          <split code="xor" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;PO_Manager&gt;cm&lt;/PO_Manager&gt;" />
+              <mapsTo>PO_Manager</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;POApproval&gt;{/Ordering/POApproval/text()}&lt;/POApproval&gt;" />
+              <mapsTo>POApproval</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Ordering/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;PO_timedout&gt;{/Ordering/PO_timedout/text()}&lt;/PO_timedout&gt;" />
+              <mapsTo>PO_timedout</mapsTo>
+            </mapping>
+          </completedMappings>
+          <decomposesTo id="Ordering" />
+        </task>
+        <task id="Carrier_Appointment_4">
+          <name>Carrier Appointment</name>
+          <flowsInto>
+            <nextElementRef id="Payment_5" />
+            <predicate>/Overall/SP_timedout/text()='false'</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Freight_in_Transit_6" />
+            <predicate>/Overall/SP_timedout/text()='false'</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_2" />
+            <predicate>/Overall/SP_timedout/text()='true'</predicate>
+            <isDefaultFlow />
+          </flowsInto>
+          <join code="xor" />
+          <split code="or" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Overall/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;SP_timedout&gt;false&lt;/SP_timedout&gt;" />
+              <mapsTo>SP_timedout</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;TransportationQuote&gt;{/Carrier_Appointment/TransportationQuote/*}&lt;/TransportationQuote&gt;" />
+              <mapsTo>TransportationQuote</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;ShipmentNotice&gt;{/Carrier_Appointment/ShipmentNotice/*}&lt;/ShipmentNotice&gt;" />
+              <mapsTo>ShipmentNotice</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;SP_timedout&gt;{/Carrier_Appointment/SP_timedout/text()}&lt;/SP_timedout&gt;" />
+              <mapsTo>SP_timedout</mapsTo>
+            </mapping>
+          </completedMappings>
+          <decomposesTo id="Carrier_Appointment" />
+        </task>
+        <task id="Payment_5">
+          <name>Payment</name>
+          <flowsInto>
+            <nextElementRef id="Freight_Delivered_7" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Overall/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;TransportationQuote&gt;{/Overall/TransportationQuote/*}&lt;/TransportationQuote&gt;" />
+              <mapsTo>TransportationQuote</mapsTo>
+            </mapping>
+          </startingMappings>
+          <decomposesTo id="Payment" />
+        </task>
+        <task id="Freight_in_Transit_6">
+          <name>Freight in Transit</name>
+          <flowsInto>
+            <nextElementRef id="Freight_Delivered_7" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Overall/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;TransportationQuote&gt;{/Overall/TransportationQuote/*}&lt;/TransportationQuote&gt;" />
+              <mapsTo>TransportationQuote</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;AcceptanceCertificate&gt;{/Freight_in_Transit/AcceptanceCertificate/*}&lt;/AcceptanceCertificate&gt;" />
+              <mapsTo>AcceptanceCertificate</mapsTo>
+            </mapping>
+          </completedMappings>
+          <decomposesTo id="Freight_in_Transit" />
+        </task>
+        <task id="Freight_Delivered_7">
+          <name>Freight Delivered</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_2" />
+          </flowsInto>
+          <join code="and" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;AcceptanceCertificate&gt;{/Overall/AcceptanceCertificate/*}&lt;/AcceptanceCertificate&gt;" />
+              <mapsTo>AcceptanceCertificate</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;ClaimsDeadlineTimer&gt;&lt;trigger&gt;OnEnabled&lt;/trigger&gt; &lt;expiry&gt;{/Overall/ShipmentNotice/ClaimsDeadline/text()}&lt;/expiry&gt;&lt;/ClaimsDeadlineTimer&gt;" />
+              <mapsTo>ClaimsDeadlineTimer</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Overall/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;TransportationQuote&gt;{/Overall/TransportationQuote/*}&lt;/TransportationQuote&gt;" />
+              <mapsTo>TransportationQuote</mapsTo>
+            </mapping>
+          </startingMappings>
+          <decomposesTo id="Freight_Delivered" />
+        </task>
+        <outputCondition id="OutputCondition_2">
+          <name>end_Overall</name>
+        </outputCondition>
+      </processControlElements>
+    </decomposition>
+    
+    
+    
+    
+    <decomposition id="Carrier_Appointment" xsi:type="NetFactsType">
+      <processControlElements>
+        <inputCondition id="InputCondition_18">
+          <flowsInto>
+            <nextElementRef id="null_389" />
+          </flowsInto>
+        </inputCondition>
+        <task id="null_389">
+          <name>Calculate Carrier Timeout</name>
+          <flowsInto>
+            <nextElementRef id="null_591" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="null_513" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="null_512" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;b&gt;{count(/Carrier_Appointment/POrder/Order/OrderLines/*)}&lt;/b&gt;" />
+              <mapsTo>b</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;a&gt;4&lt;/a&gt;" />
+              <mapsTo>a</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Carrier_Appointment/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;CarrierTimeout&gt;&lt;trigger&gt;OnEnabled&lt;/trigger&gt;&lt;expiry&gt;P{/Calculate_Carrier_Timeout/c/text()}D&lt;/expiry&gt;&lt;/CarrierTimeout&gt;" />
+              <mapsTo>CarrierTimeout</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="user" />
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Calculate_Carrier_Timeout" />
+        </task>
+        <condition id="null_513">
+          <flowsInto>
+            <nextElementRef id="Estimate_Trailer_Usage_386" />
+          </flowsInto>
+        </condition>
+        <condition id="null_591">
+          <flowsInto>
+            <nextElementRef id="Carrier_Timeout_388" />
+          </flowsInto>
+        </condition>
+        <condition id="null_512">
+          <flowsInto>
+            <nextElementRef id="Prepare_Route_Guide_387" />
+          </flowsInto>
+        </condition>
+        <task id="Carrier_Timeout_388">
+          <name>Carrier Timeout</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_19" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <removesTokens id="Estimate_Trailer_Usage_386" />
+          <removesTokens id="Prepare_Route_Guide_387" />
+          <removesTokens id="Prepare_Transportation_Quote_390" />
+          <removesTokens id="null_512" />
+          <removesTokens id="null_513" />
+          <removesTokens id="null_514" />
+          <removesTokens id="null_515" />
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;SP_timedout&gt;true&lt;/SP_timedout&gt;" />
+              <mapsTo>SP_timedout</mapsTo>
+            </mapping>
+          </completedMappings>
+          <timer>
+            <netparam>CarrierTimeout</netparam>
+          </timer>
+          <resourcing>
+            <offer initiator="user" />
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Carrier_Timeout" />
+        </task>
+        <task id="Prepare_Route_Guide_387">
+          <name>Prepare Route Guide</name>
+          <flowsInto>
+            <nextElementRef id="null_515" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;DeliveryLocation&gt;{/Carrier_Appointment/POrder/DeliveryLocation/text()}&lt;/DeliveryLocation&gt;" />
+              <mapsTo>DeliveryLocation</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;RouteGuide&gt;&lt;OrderNumber&gt;{/Prepare_Route_Guide/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;DeliveryLocation&gt;{/Prepare_Route_Guide/DeliveryLocation/text()}&lt;/DeliveryLocation&gt; &lt;Trackpoints&gt;{/Prepare_Route_Guide/Trackpoints/*}&lt;/Trackpoints&gt;&lt;/RouteGuide&gt;" />
+              <mapsTo>RouteGuide</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-1d24fa82-c18c-47aa-a7b4-a6283d5ea889</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="system">
+              <allocator>
+                <name>ShortestQueue</name>
+              </allocator>
+            </allocate>
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Prepare_Route_Guide" />
+        </task>
+        <task id="Estimate_Trailer_Usage_386">
+          <name>Estimate Trailer Usage</name>
+          <flowsInto>
+            <nextElementRef id="null_514" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderLines&gt;{/Carrier_Appointment/POrder/Order/OrderLines/*}&lt;/OrderLines&gt;" />
+              <mapsTo>OrderLines</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;TrailerUsage&gt;&lt;OrderNumber&gt;{/Prepare_Route_Guide/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;Packages&gt;{/Estimate_Trailer_Usage/Packages/*}&lt;/Packages&gt;&lt;/TrailerUsage&gt;" />
+              <mapsTo>TrailerUsage</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-1d24fa82-c18c-47aa-a7b4-a6283d5ea889</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="system">
+              <allocator>
+                <name>RoundRobinByTime</name>
+              </allocator>
+            </allocate>
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Estimate_Trailer_Usage" />
+        </task>
+        <condition id="null_514">
+          <flowsInto>
+            <nextElementRef id="Prepare_Transportation_Quote_390" />
+          </flowsInto>
+        </condition>
+        <condition id="null_515">
+          <flowsInto>
+            <nextElementRef id="Prepare_Transportation_Quote_390" />
+          </flowsInto>
+        </condition>
+        <task id="Prepare_Transportation_Quote_390">
+          <name>Prepare Transportation Quote</name>
+          <flowsInto>
+            <nextElementRef id="null_518" />
+            <predicate ordering="1">/Carrier_Appointment/TransportationQuote/TotalVolume&gt;=10000</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="null_391" />
+            <predicate ordering="0">/Carrier_Appointment/TransportationQuote/TotalVolume&lt;10000 and /Carrier_Appointment/TransportationQuote/NumberOfPackages&gt;1</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Arrange_Pickup_Appointment_819" />
+            <isDefaultFlow />
+          </flowsInto>
+          <join code="and" />
+          <split code="xor" />
+          <removesTokens id="Carrier_Timeout_388" />
+          <removesTokens id="null_591" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;TransportationQuote&gt;&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;&lt;NumberOfPackages&gt;{//Carrier_Appointment/TrailerUsage/Packages/count(Package)}&lt;/NumberOfPackages&gt;&lt;TotalVolume&gt;{//Carrier_Appointment/TrailerUsage/Packages/sum(Package/Volume)}&lt;/TotalVolume&gt;&lt;ShipmentNumber/&gt;&lt;ShipmentCost&gt;{/Carrier_Appointment/POrder/FreightCost/text()}&lt;/ShipmentCost&gt;&lt;/TransportationQuote&gt;" />
+              <mapsTo>TransportationQuote</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;TransportationQuote&gt;{/Prepare_Transportation_Quote/TransportationQuote/*}&lt;/TransportationQuote&gt;" />
+              <mapsTo>TransportationQuote</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{if (/Prepare_Transportation_Quote/TransportationQuote/NumberOfPackages&gt;1) then 'true' else 'false'}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                  <role>RO-7ea86545-b166-42f9-9c89-c73fd541f8a2</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="system" />
+            <privileges>
+              <privilege>
+                <name>canSuspend</name>
+                <allowall>true</allowall>
+              </privilege>
+              <privilege>
+                <name>canReallocateStateless</name>
+                <allowall>true</allowall>
+              </privilege>
+              <privilege>
+                <name>canReallocateStateful</name>
+                <allowall>true</allowall>
+              </privilege>
+            </privileges>
+          </resourcing>
+          <decomposesTo id="Prepare_Transportation_Quote" />
+        </task>
+        <condition id="null_518">
+          <name>FTL</name>
+          <flowsInto>
+            <nextElementRef id="Arrange_Pickup_Appointment_449" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Arrange_Delivery_Appointment_450" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Create_Shipment_Information_Document_817" />
+          </flowsInto>
+        </condition>
+        <task id="Arrange_Pickup_Appointment_819">
+          <name>Arrange Pickup Appointment</name>
+          <flowsInto>
+            <nextElementRef id="Arrange_Delivery_Appointment_820" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;PickupDate&gt;{fn:current-date()}&lt;/PickupDate&gt;&lt;PickupInstructions/&gt;&lt;PickupSpot/&gt;&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;{/Arrange_Pickup_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                  <role>RO-7ea86545-b166-42f9-9c89-c73fd541f8a2</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Pickup_Appointment" />
+        </task>
+        <task id="null_391">
+          <name>LTL</name>
+          <flowsInto>
+            <nextElementRef id="null_516" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Arrange_Pickup_Appointment_393" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <task id="Arrange_Pickup_Appointment_449">
+          <name>Arrange Pickup Appointment</name>
+          <flowsInto>
+            <nextElementRef id="null_519" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;PickupDate&gt;{fn:current-date()}&lt;/PickupDate&gt;&lt;PickupInstructions/&gt;&lt;PickupSpot/&gt;&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;{/Arrange_Pickup_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29959559-7725-40a0-930e-ee4a56541654</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Pickup_Appointment" />
+        </task>
+        <task id="Arrange_Delivery_Appointment_450">
+          <name>Arrange Delivery Appointment</name>
+          <flowsInto>
+            <nextElementRef id="null_520" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;DeliveryDate&gt;{fn:current-date()}&lt;/DeliveryDate&gt;&lt;DeliveryInstructions/&gt;&lt;DeliveryLocation&gt;{/Carrier_Appointment/POrder/DeliveryLocation/text()}&lt;/DeliveryLocation&gt;&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Arrange_Delivery_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29959559-7725-40a0-930e-ee4a56541654</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Delivery_Appointment" />
+        </task>
+        <task id="Create_Shipment_Information_Document_817">
+          <name>Create Shipment Information Document</name>
+          <flowsInto>
+            <nextElementRef id="null_521" />
+            <predicate>exists(/Carrier_Appointment/DeliveryInstructions/ShipmentNumber) and exists(/Carrier_Appointment/PickupInstructions/ShipmentNumber)</predicate>
+            <isDefaultFlow />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Arrange_Delivery_Appointment_455" />
+            <predicate>empty(/Carrier_Appointment/DeliveryInstructions/ShipmentNumber)</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Arrange_Pickup_Appointment_454" />
+            <predicate>empty(/Carrier_Appointment/PickupInstructions/ShipmentNumber)</predicate>
+          </flowsInto>
+          <join code="xor" />
+          <split code="or" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentInformationDocument&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;&lt;AuthorizationCode/&gt;&lt;ConsigneeNumber&gt;1&lt;/ConsigneeNumber&gt;&lt;/ShipmentInformationDocument&gt;" />
+              <mapsTo>ShipmentInformationDocument</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ShipmentInformationDocument&gt;{/Create_Shipment_Information_Document/ShipmentInformationDocument/*}&lt;/ShipmentInformationDocument&gt;" />
+              <mapsTo>ShipmentInformationDocument</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                </initialSet>
+                <filters>
+                  <filter>
+                    <name>CapabilityFilter</name>
+                    <params>
+                      <param>
+                        <key>Capability</key>
+                        <value>Master's in SCLM</value>
+                      </param>
+                    </params>
+                  </filter>
+                </filters>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Create_Shipment_Information_Document" />
+        </task>
+        <condition id="null_521">
+          <name>Pickup and delivery information completed</name>
+          <flowsInto>
+            <nextElementRef id="Modify_Delivery_Appointment_398" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Produce_Shipment_Notice_401" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Modify_Pickup_Appointment_397" />
+          </flowsInto>
+        </condition>
+        <condition id="null_516">
+          <flowsInto>
+            <nextElementRef id="Arrange_Delivery_Appointment_392" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Create_Bill_of_Lading_818" />
+          </flowsInto>
+        </condition>
+        <condition id="null_519">
+          <flowsInto>
+            <nextElementRef id="Arrange_Delivery_Appointment_451" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Create_Shipment_Information_Document_817" />
+          </flowsInto>
+        </condition>
+        <condition id="null_520">
+          <flowsInto>
+            <nextElementRef id="Arrange_Pickup_Appointment_452" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Create_Shipment_Information_Document_817" />
+          </flowsInto>
+        </condition>
+        <task id="Produce_Shipment_Notice_401">
+          <name>Produce Shipment Notice</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_19" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentNotice&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;&lt;PickupInstructions&gt;{/Carrier_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;&lt;StartLoad&gt;{fn:current-time()}&lt;/StartLoad&gt; &lt;EndLoad&gt;{fn:current-time()}&lt;/EndLoad&gt;&lt;DeliveryInstructions&gt;{/Carrier_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;&lt;ClaimsDeadline&gt;P10D&lt;/ClaimsDeadline&gt;&lt;DriverNumber/&gt; &lt;DriverName/&gt;&lt;/ShipmentNotice&gt;" />
+              <mapsTo>ShipmentNotice</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ShipmentNotice&gt;{/Produce_Shipment_Notice/ShipmentNotice/*}&lt;/ShipmentNotice&gt;" />
+              <mapsTo>ShipmentNotice</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-bf5f4c3d-0db3-42c9-b146-babf3919452b</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Produce_Shipment_Notice" />
+        </task>
+        <task id="Arrange_Delivery_Appointment_820">
+          <name>Arrange Delivery Appointment</name>
+          <flowsInto>
+            <nextElementRef id="Create_Carrier_Manifest_1790" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;DeliveryDate&gt;{fn:current-date()}&lt;/DeliveryDate&gt;&lt;DeliveryInstructions/&gt;&lt;DeliveryLocation&gt;{/Carrier_Appointment/POrder/DeliveryLocation/text()}&lt;/DeliveryLocation&gt;&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Arrange_Delivery_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                  <role>RO-7ea86545-b166-42f9-9c89-c73fd541f8a2</role>
+                </initialSet>
+              </distributionSet>
+              <familiarParticipant taskID="Arrange_Pickup_Appointment_819" />
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Delivery_Appointment" />
+        </task>
+        <task id="Arrange_Pickup_Appointment_393">
+          <name>Arrange Pickup Appointment</name>
+          <flowsInto>
+            <nextElementRef id="Create_Bill_of_Lading_818" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;PickupDate&gt;{fn:current-date()}&lt;/PickupDate&gt;&lt;PickupInstructions/&gt;&lt;PickupSpot/&gt;&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;{/Arrange_Pickup_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29f4dc0d-ae18-4618-b1d0-fe5b6327db3c</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Pickup_Appointment" />
+        </task>
+        <task id="Arrange_Pickup_Appointment_454">
+          <name>Arrange Pickup Appointment</name>
+          <flowsInto>
+            <nextElementRef id="null_456" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;PickupDate&gt;{fn:current-date()}&lt;/PickupDate&gt;&lt;PickupInstructions/&gt;&lt;PickupSpot/&gt;&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;{/Arrange_Pickup_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29f4dc0d-ae18-4618-b1d0-fe5b6327db3c</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Pickup_Appointment" />
+        </task>
+        <task id="Arrange_Delivery_Appointment_392">
+          <name>Arrange Delivery Appointment</name>
+          <flowsInto>
+            <nextElementRef id="Create_Bill_of_Lading_818" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;DeliveryDate&gt;{fn:current-date()}&lt;/DeliveryDate&gt;&lt;DeliveryInstructions/&gt;&lt;DeliveryLocation&gt;{/Carrier_Appointment/POrder/DeliveryLocation/text()}&lt;/DeliveryLocation&gt;&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Arrange_Delivery_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29959559-7725-40a0-930e-ee4a56541654</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Delivery_Appointment" />
+        </task>
+        <task id="Create_Bill_of_Lading_818">
+          <name>Create Bill of Lading</name>
+          <flowsInto>
+            <nextElementRef id="Arrange_Delivery_Appointment_396" />
+            <predicate ordering="0">empty(/Carrier_Appointment/DeliveryInstructions/ShipmentNumber)</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="null_521" />
+            <isDefaultFlow />
+          </flowsInto>
+          <join code="or" />
+          <split code="xor" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;BillOfLading&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;&lt;AuthorizationCode/&gt; &lt;ConsigneeNumber&gt;1&lt;/ConsigneeNumber&gt;&lt;/BillOfLading&gt;" />
+              <mapsTo>BillOfLading</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;BillOfLading&gt;{/Create_Bill_of_Lading/BillOfLading/*}&lt;/BillOfLading&gt;" />
+              <mapsTo>BillOfLading</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                </initialSet>
+                <filters>
+                  <filter>
+                    <name>CapabilityFilter</name>
+                    <params>
+                      <param>
+                        <key>Capability</key>
+                        <value>Bachelor's in SCLM</value>
+                      </param>
+                    </params>
+                  </filter>
+                </filters>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Create_Bill_of_Lading" />
+        </task>
+        <task id="Modify_Pickup_Appointment_397">
+          <name>Modify Pickup Appointment</name>
+          <flowsInto>
+            <nextElementRef id="null_522" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;{/Carrier_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;{/Modify_Pickup_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29f4dc0d-ae18-4618-b1d0-fe5b6327db3c</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Modify_Pickup_Appointment" />
+        </task>
+        <task id="Arrange_Pickup_Appointment_452">
+          <name>Arrange Pickup Appointment</name>
+          <flowsInto>
+            <nextElementRef id="Create_Shipment_Information_Document_817" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;PickupDate&gt;{fn:current-date()}&lt;/PickupDate&gt;&lt;PickupInstructions/&gt;&lt;PickupSpot/&gt;&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;{/Arrange_Pickup_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29959559-7725-40a0-930e-ee4a56541654</role>
+                </initialSet>
+                <constraints>
+                  <constraint>
+                    <name>SeparationOfDuties</name>
+                    <params>
+                      <param>
+                        <key>familiarTask</key>
+                        <value>Arrange_Delivery_Appointment_450</value>
+                      </param>
+                    </params>
+                  </constraint>
+                </constraints>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Pickup_Appointment" />
+        </task>
+        <task id="Modify_Delivery_Appointment_398">
+          <name>Modify Delivery Appointment</name>
+          <flowsInto>
+            <nextElementRef id="null_523" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Carrier_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Modify_Delivery_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-7ea86545-b166-42f9-9c89-c73fd541f8a2</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Modify_Delivery_Appointment" />
+        </task>
+        <task id="Arrange_Delivery_Appointment_451">
+          <name>Arrange Delivery Appointment</name>
+          <flowsInto>
+            <nextElementRef id="Create_Shipment_Information_Document_817" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;DeliveryDate&gt;{fn:current-date()}&lt;/DeliveryDate&gt;&lt;DeliveryInstructions/&gt;&lt;DeliveryLocation&gt;{/Carrier_Appointment/POrder/DeliveryLocation/text()}&lt;/DeliveryLocation&gt;&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Arrange_Delivery_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29959559-7725-40a0-930e-ee4a56541654</role>
+                </initialSet>
+                <constraints>
+                  <constraint>
+                    <name>SeparationOfDuties</name>
+                    <params>
+                      <param>
+                        <key>familiarTask</key>
+                        <value>Arrange_Pickup_Appointment_449</value>
+                      </param>
+                    </params>
+                  </constraint>
+                </constraints>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Delivery_Appointment" />
+        </task>
+        <task id="Arrange_Delivery_Appointment_455">
+          <name>Arrange Delivery Appointment</name>
+          <flowsInto>
+            <nextElementRef id="null_456" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;DeliveryDate&gt;{fn:current-date()}&lt;/DeliveryDate&gt;&lt;DeliveryInstructions/&gt;&lt;DeliveryLocation&gt;{/Carrier_Appointment/POrder/DeliveryLocation/text()}&lt;/DeliveryLocation&gt;&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Arrange_Delivery_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-7ea86545-b166-42f9-9c89-c73fd541f8a2</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Delivery_Appointment" />
+        </task>
+        <condition id="null_522">
+          <flowsInto>
+            <nextElementRef id="Modify_Delivery_Appointment_399" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Produce_Shipment_Notice_401" />
+          </flowsInto>
+        </condition>
+        <condition id="null_523">
+          <flowsInto>
+            <nextElementRef id="Produce_Shipment_Notice_401" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Modify_Pickup_Appointment_400" />
+          </flowsInto>
+        </condition>
+        <task id="Modify_Pickup_Appointment_400">
+          <name>Modify Pickup Appointment</name>
+          <flowsInto>
+            <nextElementRef id="Produce_Shipment_Notice_401" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;{/Carrier_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;PickupInstructions&gt;{/Modify_Pickup_Appointment/PickupInstructions/*}&lt;/PickupInstructions&gt;" />
+              <mapsTo>PickupInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29f4dc0d-ae18-4618-b1d0-fe5b6327db3c</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Modify_Pickup_Appointment" />
+        </task>
+        <task id="Arrange_Delivery_Appointment_396">
+          <name>Arrange Delivery Appointment</name>
+          <flowsInto>
+            <nextElementRef id="null_521" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;NumberOfPackages&gt;{/Carrier_Appointment/TransportationQuote/NumberOfPackages/text()}&lt;/NumberOfPackages&gt;" />
+              <mapsTo>NumberOfPackages</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;Truckload&gt;{fn:boolean(/Carrier_Appointment/Truckload/text())}&lt;/Truckload&gt;" />
+              <mapsTo>Truckload</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;" />
+              <mapsTo>OrderNumber</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;DeliveryDate&gt;{fn:current-date()}&lt;/DeliveryDate&gt;&lt;DeliveryInstructions/&gt;&lt;DeliveryLocation&gt;{/Carrier_Appointment/POrder/DeliveryLocation/text()}&lt;/DeliveryLocation&gt;&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Arrange_Delivery_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Arrange_Delivery_Appointment" />
+        </task>
+        <task id="null_456">
+          <flowsInto>
+            <nextElementRef id="null_521" />
+          </flowsInto>
+          <join code="or" />
+          <split code="and" />
+        </task>
+        <task id="Create_Carrier_Manifest_1790">
+          <name>Create Carrier Manifest</name>
+          <flowsInto>
+            <nextElementRef id="Produce_Shipment_Notice_401" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;CarrierManifest&gt;&lt;ShipmentNumber&gt;{/Carrier_Appointment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt; &lt;OrderNumber&gt;{/Carrier_Appointment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;&lt;/CarrierManifest&gt;" />
+              <mapsTo>CarrierManifest</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;CarrierManifest&gt;{/Create_Carrier_Manifest/CarrierManifest/*}&lt;/CarrierManifest&gt;" />
+              <mapsTo>CarrierManifest</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                  <role>RO-7ea86545-b166-42f9-9c89-c73fd541f8a2</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="system">
+              <allocator>
+                <name>RoundRobinByExperience</name>
+              </allocator>
+            </allocate>
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Create_Carrier_Manifest" />
+        </task>
+        <task id="Modify_Delivery_Appointment_399">
+          <name>Modify Delivery Appointment</name>
+          <flowsInto>
+            <nextElementRef id="Produce_Shipment_Notice_401" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Carrier_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;DeliveryInstructions&gt;{/Modify_Delivery_Appointment/DeliveryInstructions/*}&lt;/DeliveryInstructions&gt;" />
+              <mapsTo>DeliveryInstructions</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-7ea86545-b166-42f9-9c89-c73fd541f8a2</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Modify_Delivery_Appointment" />
+        </task>
+        <outputCondition id="OutputCondition_19" />
+      </processControlElements>
+    </decomposition>
+        <decomposition id="Freight_in_Transit" xsi:type="NetFactsType">
+      <inputParam>
+        <index>0</index>
+        <name>TransportationQuote</name>
+        <type>TransportationQuoteType</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </inputParam>
+      <inputParam>
+        <index>1</index>
+        <name>POrder</name>
+        <type>PurchaseOrderType</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </inputParam>
+      <outputParam>
+        <index>2</index>
+        <name>AcceptanceCertificate</name>
+        <type>AcceptanceCertificateType</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </outputParam>
+      <localVariable>
+        <index>0</index>
+        <name>AcceptanceCertificate</name>
+        <type>AcceptanceCertificateType</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+      </localVariable>
+      <localVariable>
+        <index>3</index>
+        <name>ShipmentStatusInquiry</name>
+        <type>ShipmentStatusInquiryType</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+        <initialValue />
+      </localVariable>
+      <localVariable>
+        <index>5</index>
+        <name>TrackpointNotices</name>
+        <type>TrackpointNoticesType</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+        <initialValue>&lt;TrackpointNotice&gt;
+&lt;OrderNumber/&gt;
+&lt;ShipmentNumber/&gt;
+&lt;Trackpoint/&gt;
+&lt;ArrivalTime&gt;00:00:00&lt;/ArrivalTime&gt;
+&lt;DepartureTime&gt;00:00:00&lt;/DepartureTime&gt;
+&lt;Notes/&gt;
+&lt;/TrackpointNotice&gt;</initialValue>
+      </localVariable>
+      <localVariable>
+        <index>4</index>
+        <name>TrackpointOrderEntries</name>
+        <type>TrackpointOrderEntriesType</type>
+        <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+        <initialValue />
+      </localVariable>
+      <processControlElements>
+        <inputCondition id="InputCondition_46">
+          <flowsInto>
+            <nextElementRef id="null_815" />
+          </flowsInto>
+        </inputCondition>
+        <task id="null_815">
+          <flowsInto>
+            <nextElementRef id="null_812" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Issue_Trackpoint_Notice_813" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <condition id="null_812">
+          <flowsInto>
+            <nextElementRef id="Initiate_Shipment_Status_Inquiry_929" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Create_Acceptance_Certificate_814" />
+          </flowsInto>
+        </condition>
+        <task id="Create_Acceptance_Certificate_814">
+          <name>Create Acceptance Certificate</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_47" />
+          </flowsInto>
+          <join code="and" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;AcceptanceCertificate&gt;&lt;OrderNumber&gt;{/Freight_in_Transit/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;ShipmentNumber&gt;{/Freight_in_Transit/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt; &lt;AcceptanceDate&gt;{fn:current-date()}&lt;/AcceptanceDate&gt; &lt;DeliveryNotes/&gt;&lt;/AcceptanceCertificate&gt;" />
+              <mapsTo>AcceptanceCertificate</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;AcceptanceCertificate&gt;{/Create_Acceptance_Certificate/AcceptanceCertificate/*}&lt;/AcceptanceCertificate&gt;" />
+              <mapsTo>AcceptanceCertificate</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-4ed64ae5-32ff-49fc-8129-8deffc7e3018</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Create_Acceptance_Certificate" />
+        </task>
+        <task id="Initiate_Shipment_Status_Inquiry_929">
+          <name>Initiate Shipment Status Inquiry</name>
+          <flowsInto>
+            <nextElementRef id="null_812" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentStatusInquiry&gt;&lt;OrderNumber&gt;{/Freight_in_Transit/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;ShipmentNumber&gt;{/Freight_in_Transit/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt; &lt;Inquiry/&gt;&lt;/ShipmentStatusInquiry&gt;" />
+              <mapsTo>ShipmentStatusInquiry</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ShipmentStatusInquiry&gt;{/Initiate_Shipment_Status_Inquiry/ShipmentStatusInquiry/*}&lt;/ShipmentStatusInquiry&gt;" />
+              <mapsTo>ShipmentStatusInquiry</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29959559-7725-40a0-930e-ee4a56541654</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Initiate_Shipment_Status_Inquiry" />
+        </task>
+        <task id="Issue_Trackpoint_Notice_813">
+          <name>Issue Trackpoint Notice</name>
+          <flowsInto>
+            <nextElementRef id="null_4366" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;TrackpointNotice&gt;&lt;OrderNumber&gt;{/Freight_in_Transit/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt;&lt;ShipmentNumber&gt;{/Freight_in_Transit/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;Trackpoint/&gt;&lt;ArrivalTime&gt;{fn:current-time()}&lt;/ArrivalTime&gt;&lt;DepartureTime&gt;{fn:current-time()}&lt;/DepartureTime&gt;&lt;Notes/&gt;&lt;/TrackpointNotice&gt;" />
+              <mapsTo>TrackpointNotice</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;TrackpointNotices&gt;{if(count(/Freight_in_Transit/TrackpointNotices/*)=0)then &lt;TrackpointNotice&gt;   &lt;OrderNumber&gt;placeholder   &lt;/OrderNumber&gt;   &lt;ShipmentNumber&gt;placeholder   &lt;/ShipmentNumber&gt;   &lt;Trackpoint&gt;placeholder   &lt;/Trackpoint&gt;   &lt;ArrivalTime&gt;     {fn:current-time()}   &lt;/ArrivalTime&gt;   &lt;DepartureTime&gt;     {fn:current-time()}   &lt;/DepartureTime&gt;   &lt;Notes&gt;placeholder   &lt;/Notes&gt; &lt;/TrackpointNotice&gt; else /Freight_in_Transit/TrackpointNotices/* }&lt;/TrackpointNotices&gt;" />
+              <mapsTo>TrackpointNotices</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;TrackpointNotices&gt;{/Issue_Trackpoint_Notice/TrackpointNotice} {if (/Issue_Trackpoint_Notice/TrackpointNotices/TrackpointNotice/ShipmentNumber/text()!='placeholder') then( /Issue_Trackpoint_Notice/TrackpointNotices/* ) else()}&lt;/TrackpointNotices&gt;" />
+              <mapsTo>TrackpointNotices</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-e541c7e5-62b5-4017-9d70-0ee7ae86502d</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Issue_Trackpoint_Notice" />
+        </task>
+        <condition id="null_4366">
+          <flowsInto>
+            <nextElementRef id="Issue_Trackpoint_Notice_813" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Log_Trackpoint_Order_Entry_4514" />
+          </flowsInto>
+        </condition>
+        <task id="Log_Trackpoint_Order_Entry_4514" xsi:type="MultipleInstanceExternalTaskFactsType">
+          <name>Log Trackpoint Order Entry</name>
+          <flowsInto>
+            <nextElementRef id="Create_Acceptance_Certificate_814" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-80e204b8-bb52-46e9-ba01-3567568e1ad6</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Log_Trackpoint_Order_Entry" />
+          <minimum>1</minimum>
+          <maximum>2147483647</maximum>
+          <threshold>2147483647</threshold>
+          <creationMode code="static" />
+          <miDataInput>
+            <expression query="/Freight_in_Transit/TrackpointNotices" />
+            <splittingExpression query="for $i in /TrackpointNotices/* return $i" />
+            <formalInputParam>TrackpointNotice</formalInputParam>
+          </miDataInput>
+          <miDataOutput>
+            <formalOutputExpression query="&lt;TrackpointOrderEntry&gt; &lt;TrackpointNotice&gt;&lt;OrderNumber&gt;{/Log_Trackpoint_Order_Entry/TrackpointNotice/OrderNumber/text()}&lt;/OrderNumber&gt;&lt;ShipmentNumber&gt;{/Log_Trackpoint_Order_Entry/TrackpointNotice/ShipmentNumber/text()}&lt;/ShipmentNumber&gt; &lt;Trackpoint&gt;{/Log_Trackpoint_Order_Entry/TrackpointNotice/Trackpoint/text()}&lt;/Trackpoint&gt;&lt;ArrivalTime&gt;{/Log_Trackpoint_Order_Entry/TrackpointNotice/ArrivalTime/text()}&lt;/ArrivalTime&gt; &lt;DepartureTime&gt;{/Log_Trackpoint_Order_Entry/TrackpointNotice/DepartureTime/text()}&lt;/DepartureTime&gt;&lt;Notes&gt;{/Log_Trackpoint_Order_Entry/TrackpointNotice/Notes/text()}&lt;/Notes&gt; &lt;/TrackpointNotice&gt; &lt;Report&gt;{/Log_Trackpoint_Order_Entry/Report/text()}&lt;/Report&gt; &lt;/TrackpointOrderEntry&gt;" />
+            <outputJoiningExpression query="&lt;TrackpointOrderEntries&gt;{for $i in /Log_Trackpoint_Order_Entry/TrackpointOrderEntry return $i}&lt;/TrackpointOrderEntries&gt;" />
+            <resultAppliedToLocalVariable>TrackpointOrderEntries</resultAppliedToLocalVariable>
+          </miDataOutput>
+        </task>
+        <outputCondition id="OutputCondition_47" />
+      </processControlElements>
+    </decomposition>
+    
+    
+    
+    
+    
+    
+    
+    
+    <decomposition id="Payment" xsi:type="NetFactsType">
+      <processControlElements>
+        <inputCondition id="InputCondition_44">
+          <flowsInto>
+            <nextElementRef id="null_592" />
+          </flowsInto>
+        </inputCondition>
+        <task id="null_592">
+          <flowsInto>
+            <nextElementRef id="null_596" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Issue_Shipment_Invoice_594" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <task id="null_596">
+          <flowsInto>
+            <nextElementRef id="null_597" />
+            <isDefaultFlow />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Produce_Freight_Invoice_595" />
+            <predicate ordering="0">/Payment/POrder/InvoiceRequired/text()='true'</predicate>
+          </flowsInto>
+          <join code="xor" />
+          <split code="xor" />
+        </task>
+        <task id="Issue_Shipment_Invoice_594">
+          <name>Issue Shipment Invoice</name>
+          <flowsInto>
+            <nextElementRef id="Issue_Shipment_Remittance_Advice_601" />
+            <predicate ordering="0">/Payment/POrder/PrePaid/text()='true'</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Issue_Shipment_Payment_Order_602" />
+            <isDefaultFlow />
+          </flowsInto>
+          <join code="xor" />
+          <split code="xor" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentInvoice&gt;&lt;OrderNumber&gt;{/Payment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;ShipmentNumber&gt;{/Payment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt;&lt;Company&gt;{/Payment/POrder/Company/*}&lt;/Company&gt;&lt;ShipmentCost&gt;{/Payment/TransportationQuote/ShipmentCost/text()}&lt;/ShipmentCost&gt;&lt;/ShipmentInvoice&gt;" />
+              <mapsTo>ShipmentInvoice</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ShipmentInvoice&gt;{/Issue_Shipment_Invoice/ShipmentInvoice/*}&lt;/ShipmentInvoice&gt;" />
+              <mapsTo>ShipmentInvoice</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-326e7029-c9b5-4a7e-a6ea-d310bc43ca9d</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Issue_Shipment_Invoice" />
+        </task>
+        <task id="Issue_Shipment_Payment_Order_602">
+          <name>Issue Shipment Payment Order</name>
+          <flowsInto>
+            <nextElementRef id="Approve_Shipment_Payment_Order_593" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPaymentOrder&gt;&lt;ShipmentPaymentOrderNumber/&gt; &lt;OrderNumber&gt;{/Payment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;ShipmentNumber&gt;{/Payment/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt; &lt;ShipmentCost&gt;{/Payment/TransportationQuote/ShipmentCost/text()}&lt;/ShipmentCost&gt; &lt;Beneficiary&gt; &lt;Beneficiary&gt; &lt;Name/&gt; &lt;Address/&gt; &lt;City/&gt; &lt;State/&gt; &lt;PostCode/&gt; &lt;Phone/&gt; &lt;Fax/&gt; &lt;BusinessNumber/&gt; &lt;/Beneficiary&gt; &lt;Bank/&gt; &lt;BankCode/&gt; &lt;AccountName/&gt; &lt;AccountNumber/&gt; &lt;/Beneficiary&gt;&lt;/ShipmentPaymentOrder&gt;" />
+              <mapsTo>ShipmentPaymentOrder</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPaymentOrder&gt;{/Issue_Shipment_Payment_Order/ShipmentPaymentOrder/*}&lt;/ShipmentPaymentOrder&gt;" />
+              <mapsTo>ShipmentPaymentOrder</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-6a07958f-127f-4543-8abe-dc331aa217e0</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Issue_Shipment_Payment_Order" />
+        </task>
+        <task id="Produce_Freight_Invoice_595">
+          <name>Produce Freight Invoice</name>
+          <flowsInto>
+            <nextElementRef id="null_597" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;FreightInvoice&gt;&lt;OrderNumber&gt;{/Payment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;Company&gt;{/Payment/POrder/Company/*}&lt;/Company&gt; &lt;FreightCost&gt;{/Payment/POrder/FreightCost/text()}&lt;/FreightCost&gt;&lt;/FreightInvoice&gt;" />
+              <mapsTo>FreightInvoice</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;FreightInvoice&gt;{/Produce_Freight_Invoice/FreightInvoice/*}&lt;/FreightInvoice&gt;" />
+              <mapsTo>FreightInvoice</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-326e7029-c9b5-4a7e-a6ea-d310bc43ca9d</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Produce_Freight_Invoice" />
+        </task>
+        <task id="null_597">
+          <flowsInto>
+            <nextElementRef id="Process_Freight_Payment_3882" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <task id="Issue_Shipment_Remittance_Advice_601">
+          <name>Issue Shipment Remittance Advice</name>
+          <flowsInto>
+            <nextElementRef id="null_607" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentRemittanceAdvice&gt;&lt;OrderNumber&gt;{/Payment/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;AmountDebited&gt;0.00&lt;/AmountDebited&gt;&lt;/ShipmentRemittanceAdvice&gt;" />
+              <mapsTo>ShipmentRemittanceAdvice</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ShipmentRemittanceAdvice&gt;{/Issue_Shipment_Remittance_Advice/ShipmentRemittanceAdvice/*}&lt;/ShipmentRemittanceAdvice&gt;" />
+              <mapsTo>ShipmentRemittanceAdvice</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-6a07958f-127f-4543-8abe-dc331aa217e0</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Issue_Shipment_Remittance_Advice" />
+        </task>
+        <task id="Process_Freight_Payment_3882">
+          <name>Process Freight Payment</name>
+          <flowsInto>
+            <nextElementRef id="null_599" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <decomposesTo id="Process_Freight_Payment" />
+        </task>
+        <task id="Approve_Shipment_Payment_Order_593">
+          <name>Approve Shipment Payment Order</name>
+          <flowsInto>
+            <nextElementRef id="Update_Shipment_Payment_Order_604" />
+            <predicate ordering="0">/Payment/ShipmentPaymentOrderApproval/Approved/text()='false'</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Process_Shipment_Payment_603" />
+            <isDefaultFlow />
+          </flowsInto>
+          <join code="xor" />
+          <split code="xor" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPaymentOrder&gt;{/Payment/ShipmentPaymentOrder/*}&lt;/ShipmentPaymentOrder&gt;" />
+              <mapsTo>ShipmentPaymentOrder</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPaymentOrderApproval&gt;{/Approve_Shipment_Payment_Order/ShipmentPaymentOrderApproval/*}&lt;/ShipmentPaymentOrderApproval&gt;" />
+              <mapsTo>ShipmentPaymentOrderApproval</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-7f46b9a2-d8a2-4339-b32c-e67013c622da</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Approve_Shipment_Payment_Order" />
+        </task>
+        <task id="null_607">
+          <flowsInto>
+            <nextElementRef id="null_599" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <task id="Update_Shipment_Payment_Order_604">
+          <name>Update Shipment Payment Order</name>
+          <flowsInto>
+            <nextElementRef id="Approve_Shipment_Payment_Order_593" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPaymentOrder&gt;{/Payment/ShipmentPaymentOrder/*}&lt;/ShipmentPaymentOrder&gt;" />
+              <mapsTo>ShipmentPaymentOrder</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPaymentOrder&gt;{/Update_Shipment_Payment_Order/ShipmentPaymentOrder/*}&lt;/ShipmentPaymentOrder&gt;" />
+              <mapsTo>ShipmentPaymentOrder</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-6a07958f-127f-4543-8abe-dc331aa217e0</role>
+                </initialSet>
+              </distributionSet>
+              <familiarParticipant taskID="Issue_Shipment_Payment_Order_602" />
+            </offer>
+            <allocate initiator="system">
+              <allocator>
+                <name>RandomChoice</name>
+              </allocator>
+            </allocate>
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Update_Shipment_Payment_Order" />
+        </task>
+        <task id="null_599">
+          <flowsInto>
+            <nextElementRef id="OutputCondition_45" />
+          </flowsInto>
+          <join code="and" />
+          <split code="and" />
+        </task>
+        <task id="Process_Shipment_Payment_603">
+          <name>Process Shipment Payment</name>
+          <flowsInto>
+            <nextElementRef id="Issue_Credit_Adjustment_606" />
+            <predicate ordering="0">/Payment/ShipmentPayment/Balance/text()&gt;0</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="null_607" />
+            <isDefaultFlow />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Issue_Debit_Adjustment_605" />
+            <predicate ordering="1">/Payment/ShipmentPayment/Balance/text()&lt;0</predicate>
+          </flowsInto>
+          <join code="xor" />
+          <split code="xor" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPaymentOrder&gt;{/Payment/ShipmentPaymentOrder/*}&lt;/ShipmentPaymentOrder&gt;" />
+              <mapsTo>ShipmentPaymentOrder</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPayment&gt;{/Process_Shipment_Payment/ShipmentPayment/*}&lt;/ShipmentPayment&gt;" />
+              <mapsTo>ShipmentPayment</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-9dcfa67a-e2b0-426c-a42e-801fdca0235a</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Process_Shipment_Payment" />
+        </task>
+        <task id="Issue_Debit_Adjustment_605">
+          <name>Issue Debit Adjustment</name>
+          <flowsInto>
+            <nextElementRef id="Process_Shipment_Payment_603" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPaymentOrder&gt;{/Payment/ShipmentPaymentOrder/*}&lt;/ShipmentPaymentOrder&gt;" />
+              <mapsTo>ShipmentPaymentOrder</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;DebitAdjustment&gt;&lt;StillDue&gt;{abs(/Payment/ShipmentPayment/Balance/text())}&lt;/StillDue&gt;&lt;/DebitAdjustment&gt;" />
+              <mapsTo>DebitAdjustment</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;DebitAdjustment&gt;{/Issue_Debit_Adjustment/DebitAdjustment/*}&lt;/DebitAdjustment&gt;" />
+              <mapsTo>DebitAdjustment</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-9dcfa67a-e2b0-426c-a42e-801fdca0235a</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="system">
+              <allocator>
+                <name>ShortestQueue</name>
+              </allocator>
+            </allocate>
+            <start initiator="system" />
+          </resourcing>
+          <decomposesTo id="Issue_Debit_Adjustment" />
+        </task>
+        <task id="Issue_Credit_Adjustment_606">
+          <name>Issue Credit Adjustment</name>
+          <flowsInto>
+            <nextElementRef id="null_607" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ShipmentPaymentOrder&gt;{/Payment/ShipmentPaymentOrder/*}&lt;/ShipmentPaymentOrder&gt;" />
+              <mapsTo>ShipmentPaymentOrder</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;CreditAdjustment&gt;&lt;Reimbursement&gt;{/Payment/ShipmentPayment/Balance/text()}&lt;/Reimbursement&gt; &lt;Beneficiary&gt;{/Payment/ShipmentPaymentOrder/Beneficiary/*}&lt;/Beneficiary&gt;&lt;/CreditAdjustment&gt;" />
+              <mapsTo>CreditAdjustment</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;CreditAdjustment&gt;{/Issue_Credit_Adjustment/CreditAdjustment/*}&lt;/CreditAdjustment&gt;" />
+              <mapsTo>CreditAdjustment</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-9dcfa67a-e2b0-426c-a42e-801fdca0235a</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="system">
+              <allocator>
+                <name>ShortestQueue</name>
+              </allocator>
+            </allocate>
+            <start initiator="system" />
+          </resourcing>
+          <decomposesTo id="Issue_Credit_Adjustment" />
+        </task>
+        <outputCondition id="OutputCondition_45" />
+      </processControlElements>
+    </decomposition>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <decomposition id="Process_Freight_Payment" xsi:type="NetFactsType">
+            <processControlElements>
+        <inputCondition id="InputCondition_3885">
+          <flowsInto>
+            <nextElementRef id="To_Be_Done_ProcessFreightPayment_30" />
+          </flowsInto>
+        </inputCondition>
+        <task id="To_Be_Done_ProcessFreightPayment_30">
+          <name>Process Freight Payment</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_3886" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;FreightPayment&gt;{/Process_Freight_Payment/FreightPayment/text()}&lt;/FreightPayment&gt;" />
+              <mapsTo>FreightPayment</mapsTo>
+            </mapping>
+          </startingMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <participant>PA-7933b9de-5aa6-4d9c-be12-d1a5cc8a8c67</participant>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="system">
+              <allocator>
+                <name>RandomChoice</name>
+              </allocator>
+            </allocate>
+            <start initiator="system" />
+          </resourcing>
+          <decomposesTo id="To_Be_Done_ProcessFreightPayment" />
+        </task>
+        <outputCondition id="OutputCondition_3886" />
+      </processControlElements>
+    </decomposition>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <decomposition id="Ordering" xsi:type="NetFactsType">
+     
+      <processControlElements>
+        <inputCondition id="InputCondition_16">
+          <flowsInto>
+            <nextElementRef id="Create_Purchase_Order_104" />
+          </flowsInto>
+        </inputCondition>
+        <task id="Create_Purchase_Order_104">
+          <name>Create Purchase Order</name>
+          <flowsInto>
+            <nextElementRef id="Approve_Purchase_Order_1901" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;PO_Manager&gt;{/Ordering/PO_Manager/text()}&lt;/PO_Manager&gt;" />
+              <mapsTo>PO_Manager</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;POrder&gt;&lt;Company&gt; &lt;Name/&gt; &lt;Address/&gt; &lt;City/&gt; &lt;State/&gt; &lt;PostCode/&gt; &lt;Phone/&gt; &lt;Fax/&gt; &lt;BusinessNumber/&gt; &lt;/Company&gt; &lt;Order&gt; &lt;OrderNumber/&gt; &lt;OrderDate&gt;{fn:current-date()}&lt;/OrderDate&gt; &lt;Currency&gt;AUD&lt;/Currency&gt; &lt;OrderTerms/&gt; &lt;RevisionNumber&gt;0&lt;/RevisionNumber&gt; &lt;Remarks/&gt; &lt;OrderLines&gt; &lt;Line&gt; &lt;LineNumber&gt;1&lt;/LineNumber&gt; &lt;UnitCode/&gt; &lt;UnitDescription/&gt; &lt;UnitQuantity&gt;1&lt;/UnitQuantity&gt; &lt;Action&gt;Added&lt;/Action&gt; &lt;/Line&gt; &lt;/OrderLines&gt; &lt;/Order&gt; &lt;FreightCost&gt;0.00&lt;/FreightCost&gt; &lt;DeliveryLocation/&gt; &lt;InvoiceRequired&gt;false&lt;/InvoiceRequired&gt; &lt;PrePaid&gt;false&lt;/PrePaid&gt;&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Create_Purchase_Order/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;PO_Manager&gt;{/Create_Purchase_Order/PO_Manager/text()}&lt;/PO_Manager&gt;" />
+              <mapsTo>PO_Manager</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-4ed64ae5-32ff-49fc-8129-8deffc7e3018</role>
+                </initialSet>
+                <constraints>
+                  <constraint>
+                    <name>PiledExecution</name>
+                  </constraint>
+                </constraints>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="system" />
+            <privileges>
+              <privilege>
+                <name>canSuspend</name>
+                <allowall>true</allowall>
+              </privilege>
+              <privilege>
+                <name>canReallocateStateless</name>
+                <allowall>true</allowall>
+              </privilege>
+              <privilege>
+                <name>canReallocateStateful</name>
+                <allowall>true</allowall>
+              </privilege>
+              <privilege>
+                <name>canDeallocate</name>
+                <allowall>true</allowall>
+              </privilege>
+              <privilege>
+                <name>canPile</name>
+                <allowall>true</allowall>
+              </privilege>
+            </privileges>
+          </resourcing>
+          <decomposesTo id="Create_Purchase_Order" />
+        </task>
+        <task id="Approve_Purchase_Order_1901">
+          <name>Approve Purchase Order</name>
+          <flowsInto>
+            <nextElementRef id="null_156" />
+            <predicate ordering="0">/Ordering/POApproval/text()='true'</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_17" />
+            <isDefaultFlow />
+          </flowsInto>
+          <join code="xor" />
+          <split code="xor" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Ordering/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;PO_timedout&gt;false&lt;/PO_timedout&gt;" />
+              <mapsTo>PO_timedout</mapsTo>
+            </mapping>
+            <mapping>
+              <expression query="&lt;POApproval&gt;{/Approve_Purchase_Order/POApproval/text()}&lt;/POApproval&gt;" />
+              <mapsTo>POApproval</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+            <privileges>
+              <privilege>
+                <name>canDelegate</name>
+                <allowall>true</allowall>
+              </privilege>
+            </privileges>
+          </resourcing>
+          <decomposesTo id="Approve_Purchase_Order" />
+        </task>
+        <condition id="null_156">
+          <flowsInto>
+            <nextElementRef id="Order_Timeout_1791" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Modify_Purchase_Order_2768" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Confirm_Purchase_Order_2013" />
+          </flowsInto>
+        </condition>
+        <task id="Confirm_Purchase_Order_2013">
+          <name>Confirm Puchase Order</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_17" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Ordering/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+          </startingMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-4ed64ae5-32ff-49fc-8129-8deffc7e3018</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+            <privileges>
+              <privilege>
+                <name>canDeallocate</name>
+                <allowall>true</allowall>
+              </privilege>
+            </privileges>
+          </resourcing>
+          <decomposesTo id="Confirm_Purchase_Order" />
+        </task>
+        <task id="Order_Timeout_1791">
+          <name>Order Timeout</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_17" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;PO_timedout&gt;true&lt;/PO_timedout&gt;" />
+              <mapsTo>PO_timedout</mapsTo>
+            </mapping>
+          </completedMappings>
+          <timer>
+            <trigger>OnEnabled</trigger>
+            <duration>P3D</duration>
+          </timer>
+          <resourcing>
+            <offer initiator="user" />
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Order_Timeout" />
+        </task>
+        <task id="Modify_Purchase_Order_2768">
+          <name>Modify Purchase Order</name>
+          <flowsInto>
+            <nextElementRef id="Approve_Purchase_Order_1901" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;POrder&gt;&lt;Company&gt; {/Ordering/POrder/Company/*} &lt;/Company&gt; &lt;Order&gt; &lt;OrderNumber&gt;{/Ordering/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;OrderDate&gt;{/Ordering/POrder/Order/OrderDate/text()}&lt;/OrderDate&gt; &lt;Currency&gt;{/Ordering/POrder/Order/Currency/text()}&lt;/Currency&gt; &lt;OrderTerms&gt;{/Ordering/POrder/Order/OrderTerms/text()}&lt;/OrderTerms&gt; &lt;RevisionNumber&gt;{/Ordering/POrder/Order/RevisionNumber/text()+1}&lt;/RevisionNumber&gt; &lt;Remarks&gt;{/Ordering/POrder/Order/Remarks/text()}&lt;/Remarks&gt; &lt;OrderLines&gt; {/Ordering/POrder/Order/OrderLines/*} &lt;/OrderLines&gt; &lt;/Order&gt; &lt;FreightCost&gt;{/Ordering/POrder/FreightCost/text()}&lt;/FreightCost&gt; &lt;DeliveryLocation&gt;{/Ordering/POrder/DeliveryLocation/text()}&lt;/DeliveryLocation&gt; &lt;InvoiceRequired&gt;{/Ordering/POrder/InvoiceRequired/text()}&lt;/InvoiceRequired&gt; &lt;PrePaid&gt;{/Ordering/POrder/PrePaid/text()}&lt;/PrePaid&gt;&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;POrder&gt;{/Modify_Purchase_Order/POrder/*}&lt;/POrder&gt;" />
+              <mapsTo>POrder</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <param>
+                    <name>PO_Manager</name>
+                    <refers>participant</refers>
+                  </param>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+            <privileges>
+              <privilege>
+                <name>canSkip</name>
+                <allowall>true</allowall>
+              </privilege>
+            </privileges>
+          </resourcing>
+          <decomposesTo id="Modify_Purchase_Order" />
+        </task>
+        <outputCondition id="OutputCondition_17">
+          <name>end_Ordering</name>
+        </outputCondition>
+      </processControlElements>
+    </decomposition>    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <decomposition id="Return_Management" xsi:type="NetFactsType">
+      
+      <processControlElements>
+        <inputCondition id="InputCondition_4047">
+          <flowsInto>
+            <nextElementRef id="Return_Management_4049" />
+          </flowsInto>
+        </inputCondition>
+        <task id="Return_Management_4049">
+          <name>Return Management</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_4048" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ReturnNotice&gt;{/Return_Management/ReturnNotice/text()}&lt;/ReturnNotice&gt;" />
+              <mapsTo>ReturnNotice</mapsTo>
+            </mapping>
+          </startingMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <participant>PA-7933b9de-5aa6-4d9c-be12-d1a5cc8a8c67</participant>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="system">
+              <allocator>
+                <name>RandomChoice</name>
+              </allocator>
+            </allocate>
+            <start initiator="system" />
+          </resourcing>
+          <decomposesTo id="To_Be_Done_ReturnManagement" />
+        </task>
+        <outputCondition id="OutputCondition_4048" />
+      </processControlElements>
+    </decomposition>
+        
+            
+                
+                    
+                        
+    
+    
+    
+    
+    
+    <decomposition id="Loss_Or_Damage_Management" xsi:type="NetFactsType">
+      
+      <processControlElements>
+        <inputCondition id="InputCondition_4050">
+          <flowsInto>
+            <nextElementRef id="Loss_Or_Damage_Management_4052" />
+          </flowsInto>
+        </inputCondition>
+        <task id="Loss_Or_Damage_Management_4052">
+          <name>Loss Or Damage Management</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_4051" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;LossOrDamageNotice&gt;{/To_Be_Done_LossOrDamageManagement/LossOrDamageNotice/text()}&lt;/LossOrDamageNotice&gt;" />
+              <mapsTo>LossOrDamageNotice</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <participant>PA-7933b9de-5aa6-4d9c-be12-d1a5cc8a8c67</participant>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="system">
+              <allocator>
+                <name>RandomChoice</name>
+              </allocator>
+            </allocate>
+            <start initiator="system" />
+          </resourcing>
+          <decomposesTo id="To_Be_Done_LossOrDamageManagement" />
+        </task>
+        <outputCondition id="OutputCondition_4051" />
+      </processControlElements>
+    </decomposition>
+    
+        
+            
+                
+                    
+    
+    
+    
+    
+    
+    
+    
+    <decomposition id="Freight_Delivered" xsi:type="NetFactsType">
+      
+      <processControlElements>
+        <inputCondition id="InputCondition_48">
+          <flowsInto>
+            <nextElementRef id="Lodge_Loss_or_Damage_Claim_Report_255" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Lodge_a_request_for_Return_Merchandise_253" />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="Claims_Timeout_254" />
+          </flowsInto>
+        </inputCondition>
+        <task id="Claims_Timeout_254">
+          <name>Claims Timeout</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_49" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <timer>
+            <netparam>ClaimsDeadlineTimer</netparam>
+          </timer>
+          <resourcing>
+            <offer initiator="user" />
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Claims_Timeout" />
+        </task>
+        <task id="Lodge_Loss_or_Damage_Claim_Report_255">
+          <name>Lodge Loss or Damage Claim Report</name>
+          <flowsInto>
+            <nextElementRef id="Authorize_Loss_or_Damage_Claim_257" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;LossOrDamageClaim&gt;&lt;OrderNumber&gt;{/Freight_Delivered/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;ShipmentNumber&gt;{/Freight_Delivered/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt; &lt;AcceptanceDate&gt;{/Freight_Delivered/AcceptanceCertificate/AcceptanceDate/text()}&lt;/AcceptanceDate&gt; &lt;ReasonForClaim/&gt;&lt;/LossOrDamageClaim&gt;" />
+              <mapsTo>LossOrDamageClaim</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;LossOrDamageClaim&gt;{/Lodge_Loss_or_Damage_Claim_Report/LossOrDamageClaim/*}&lt;/LossOrDamageClaim&gt;" />
+              <mapsTo>LossOrDamageClaim</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29959559-7725-40a0-930e-ee4a56541654</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Lodge_Loss_or_Damage_Claim_Report" />
+        </task>
+        <task id="Lodge_a_request_for_Return_Merchandise_253">
+          <name>Lodge a request for Return Merchandise</name>
+          <flowsInto>
+            <nextElementRef id="Authorize_Return_Merchandise_256" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ReturnMerchandise&gt;&lt;OrderNumber&gt;{/Freight_Delivered/POrder/Order/OrderNumber/text()}&lt;/OrderNumber&gt; &lt;ShipmentNumber&gt;{/Freight_Delivered/TransportationQuote/ShipmentNumber/text()}&lt;/ShipmentNumber&gt; &lt;AcceptanceDate&gt;{/Freight_Delivered/AcceptanceCertificate/AcceptanceDate/text()}&lt;/AcceptanceDate&gt; &lt;CheckedOrderLines&gt;{/Freight_Delivered/POrder/Order/OrderLines/*} &lt;Selected&gt;false&lt;/Selected&gt;&lt;/CheckedOrderLines&gt; &lt;ReasonForReturn/&gt;&lt;/ReturnMerchandise&gt;" />
+              <mapsTo>ReturnMerchandise</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ReturnMerchandise&gt;{/Lodge_a_request_for_Return_Merchandise/ReturnMerchandise/*}&lt;/ReturnMerchandise&gt;" />
+              <mapsTo>ReturnMerchandise</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-29959559-7725-40a0-930e-ee4a56541654</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+          </resourcing>
+          <decomposesTo id="Lodge_a_request_for_Return_Merchandise" />
+        </task>
+        <task id="Authorize_Return_Merchandise_256">
+          <name>Authorize Return Merchandise</name>
+          <flowsInto>
+            <nextElementRef id="Return_Management_4045" />
+            <isDefaultFlow />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_49" />
+            <predicate ordering="0">/Freight_Delivered/ReturnMerchandiseApproval/Approved/text()='true'</predicate>
+          </flowsInto>
+          <join code="xor" />
+          <split code="xor" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;ReturnMerchandiseApproval&gt;&lt;ReturnMerchandise&gt;{/Freight_Delivered/ReturnMerchandise/*}&lt;/ReturnMerchandise&gt; &lt;Approved&gt;false&lt;/Approved&gt;&lt;/ReturnMerchandiseApproval&gt;" />
+              <mapsTo>ReturnMerchandiseApproval</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;ReturnMerchandiseApproval&gt;{/Authorize_Return_Merchandise/ReturnMerchandiseApproval/*}&lt;/ReturnMerchandiseApproval&gt;" />
+              <mapsTo>ReturnMerchandiseApproval</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+            <privileges>
+              <privilege>
+                <name>canDelegate</name>
+                <allowall>true</allowall>
+              </privilege>
+            </privileges>
+          </resourcing>
+          <decomposesTo id="Authorize_Return_Merchandise" />
+        </task>
+        <task id="Authorize_Loss_or_Damage_Claim_257">
+          <name>Authorize Loss or Damage Claim</name>
+          <flowsInto>
+            <nextElementRef id="Loss_or_Damage_Management_4046" />
+            <isDefaultFlow />
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_49" />
+            <predicate ordering="0">/Freight_Delivered/LossOrDamageClaimApproval/Approved/text()='true'</predicate>
+          </flowsInto>
+          <join code="xor" />
+          <split code="xor" />
+          <startingMappings>
+            <mapping>
+              <expression query="&lt;LossOrDamageClaimApproval&gt;&lt;LossOrDamageClaim&gt;{/Freight_Delivered/LossOrDamageClaim/*}&lt;/LossOrDamageClaim&gt; &lt;Approved&gt;false&lt;/Approved&gt;&lt;/LossOrDamageClaimApproval&gt;" />
+              <mapsTo>LossOrDamageClaimApproval</mapsTo>
+            </mapping>
+          </startingMappings>
+          <completedMappings>
+            <mapping>
+              <expression query="&lt;LossOrDamageClaimApproval&gt;{/Authorize_Loss_or_Damage_Claim/LossOrDamageClaimApproval/*}&lt;/LossOrDamageClaimApproval&gt;" />
+              <mapsTo>LossOrDamageClaimApproval</mapsTo>
+            </mapping>
+          </completedMappings>
+          <resourcing>
+            <offer initiator="system">
+              <distributionSet>
+                <initialSet>
+                  <role>RO-5dee0ac5-b65b-42e6-bef3-8e0446f74dca</role>
+                </initialSet>
+              </distributionSet>
+            </offer>
+            <allocate initiator="user" />
+            <start initiator="user" />
+            <privileges>
+              <privilege>
+                <name>canDelegate</name>
+                <allowall>true</allowall>
+              </privilege>
+            </privileges>
+          </resourcing>
+          <decomposesTo id="Authorize_Loss_or_Damage_Claim" />
+        </task>
+        <task id="Loss_or_Damage_Management_4046">
+          <name>Loss or Damage Management</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_49" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <decomposesTo id="Loss_Or_Damage_Management" />
+        </task>
+        <task id="Return_Management_4045">
+          <name>Return Management</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_49" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <decomposesTo id="Return_Management" />
+        </task>
+        <outputCondition id="OutputCondition_49">
+          <name>Order fulfillment process ends</name>
+        </outputCondition>
+      </processControlElements>
+    </decomposition>
+    
+    
+  </specificationSet>
+
+

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<specificationSet xmlns="http://www.yawlfoundation.org/yawlschema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2" xsi:schemaLocation="http://www.yawlfoundation.org/yawlschema http://www.yawlfoundation.org/yawlschema/YAWL_Schema2.2.xsd">
+  <specification uri="nico">
+    <metaData>
+      <creator>nicolas</creator>
+      <description>No description has been given.</description>
+      <version>0.1</version>
+      <persistent>false</persistent>
+      <identifier>UID_f3589a2b-94f8-4bd4-95b0-79a90d6bbcf8</identifier>
+    </metaData>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" />
+    <decomposition id="New_Net_1" isRootNet="true" xsi:type="NetFactsType">
+      <processControlElements>
+        <inputCondition id="InputCondition_1">
+          <flowsInto>
+            <nextElementRef id="Uno_3" />
+          </flowsInto>
+        </inputCondition>
+        <task id="Uno_3">
+          <name>Uno</name>
+          <flowsInto>
+            <nextElementRef id="MultiAto_4" />
+            <predicate ordering="0">true()</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="New_Net_2_5" />
+            <predicate ordering="1">true()</predicate>
+          </flowsInto>
+          <flowsInto>
+            <nextElementRef id="New_Net_3_6" />
+            <isDefaultFlow />
+          </flowsInto>
+          <join code="xor" />
+          <split code="xor" />
+        </task>
+        <task id="MultiAto_4" xsi:type="MultipleInstanceExternalTaskFactsType">
+          <name>MultiAto</name>
+          <flowsInto>
+            <nextElementRef id="Fin_8" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <minimum>1</minimum>
+          <maximum>2</maximum>
+          <threshold>1</threshold>
+          <creationMode code="static" />
+          <miDataInput>
+            <expression query="null" />
+            <splittingExpression query="null" />
+            <formalInputParam>null</formalInputParam>
+          </miDataInput>
+        </task>
+        <task id="New_Net_3_6">
+          <name>New Net 3</name>
+          <flowsInto>
+            <nextElementRef id="null_7" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <decomposesTo id="New_Net_3" />
+        </task>
+        <task id="New_Net_2_5">
+          <name>New Net 2</name>
+          <flowsInto>
+            <nextElementRef id="null_7" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+          <decomposesTo id="New_Net_2" />
+        </task>
+        <condition id="null_7">
+          <flowsInto>
+            <nextElementRef id="Fin_8" />
+          </flowsInto>
+        </condition>
+        <task id="Fin_8">
+          <name>Fin</name>
+          <flowsInto>
+            <nextElementRef id="OutputCondition_2" />
+          </flowsInto>
+          <join code="or" />
+          <split code="and" />
+        </task>
+        <outputCondition id="OutputCondition_2" />
+      </processControlElements>
+    </decomposition>
+    <decomposition id="New_Net_2" xsi:type="NetFactsType">
+      <processControlElements>
+        <inputCondition id="InputCondition_21">
+          <flowsInto>
+            <nextElementRef id="null_23" />
+          </flowsInto>
+        </inputCondition>
+        <task id="null_23">
+          <flowsInto>
+            <nextElementRef id="OutputCondition_22" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <outputCondition id="OutputCondition_22" />
+      </processControlElements>
+    </decomposition>
+    <decomposition id="New_Net_3" xsi:type="NetFactsType">
+      <processControlElements>
+        <inputCondition id="InputCondition_24">
+          <flowsInto>
+            <nextElementRef id="null_26" />
+          </flowsInto>
+        </inputCondition>
+        <task id="null_26">
+          <flowsInto>
+            <nextElementRef id="OutputCondition_25" />
+          </flowsInto>
+          <join code="xor" />
+          <split code="and" />
+        </task>
+        <outputCondition id="OutputCondition_25" />
+      </processControlElements>
+    </decomposition>
+  </specification>
+  <layout>
+    <locale language="es" country="ES" />
+    <specification id="nico">
+      <size w="799" h="642" />
+      <net id="New_Net_1">
+        <bounds x="0" y="0" w="1737" h="700" />
+        <frame x="11" y="33" w="1741" h="704" />
+        <viewport x="0" y="0" w="1741" h="704" />
+        <vertex id="InputCondition_1">
+          <attributes>
+            <bounds x="36,0" y="448,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <vertex id="OutputCondition_2">
+          <attributes>
+            <bounds x="1680,0" y="448,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <vertex id="null_7">
+          <attributes>
+            <bounds x="928,0" y="464,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <flow source="InputCondition_1" target="Uno_3">
+          <ports in="13" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <container id="Uno_3">
+          <vertex>
+            <iconpath>/org/yawlfoundation/yawl/editor/resources/taskicons/Manual.png</iconpath>
+            <attributes>
+              <bounds x="240,0" y="456,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <decorator type="XOR_split">
+            <position>13</position>
+            <attributes>
+              <bounds x="271,0" y="456,0" w="11,0" h="32,0" />
+              <size w="11" h="32" />
+            </attributes>
+          </decorator>
+          <label>
+            <attributes>
+              <bounds x="212,0" y="488,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <flow source="Uno_3" target="MultiAto_4">
+          <ports in="2" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <flow source="Uno_3" target="New_Net_2_5">
+          <ports in="2" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <flow source="Uno_3" target="New_Net_3_6">
+          <ports in="2" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <flow source="New_Net_2_5" target="null_7">
+          <ports in="13" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <flow source="New_Net_3_6" target="null_7">
+          <ports in="13" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <flow source="Fin_8" target="OutputCondition_2">
+          <ports in="13" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <flow source="MultiAto_4" target="Fin_8">
+          <ports in="13" out="2" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <container id="Fin_8">
+          <vertex>
+            <iconpath>/org/yawlfoundation/yawl/editor/resources/taskicons/Manual.png</iconpath>
+            <attributes>
+              <bounds x="1220,0" y="472,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <decorator type="OR_join">
+            <position>12</position>
+            <attributes>
+              <bounds x="1210,0" y="472,0" w="11,0" h="32,0" />
+              <size w="11" h="32" />
+            </attributes>
+          </decorator>
+          <label>
+            <attributes>
+              <bounds x="1184,0" y="504,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <flow source="null_7" target="Fin_8">
+          <ports in="13" out="2" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <container id="New_Net_2_5">
+          <vertex>
+            <attributes>
+              <bounds x="584,0" y="452,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <label>
+            <attributes>
+              <bounds x="552,0" y="484,0" w="96,0" h="14,0" />
+            </attributes>
+          </label>
+        </container>
+        <container id="New_Net_3_6">
+          <vertex>
+            <attributes>
+              <bounds x="600,0" y="628,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <label>
+            <attributes>
+              <bounds x="568,0" y="660,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+        <container id="MultiAto_4">
+          <vertex>
+            <iconpath>/org/yawlfoundation/yawl/editor/resources/taskicons/Manual.png</iconpath>
+            <attributes>
+              <bounds x="584,0" y="284,0" w="32,0" h="32,0" />
+            </attributes>
+          </vertex>
+          <label>
+            <attributes>
+              <bounds x="552,0" y="316,0" w="96,0" h="19,0" />
+            </attributes>
+          </label>
+        </container>
+      </net>
+      <net id="New_Net_2">
+        <bounds x="0" y="0" w="1737" h="700" />
+        <frame x="11" y="33" w="1741" h="704" />
+        <viewport x="0" y="0" w="1741" h="704" />
+        <vertex id="InputCondition_21">
+          <attributes>
+            <bounds x="36,0" y="352,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <vertex id="OutputCondition_22">
+          <attributes>
+            <bounds x="1680,0" y="352,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <vertex id="null_23">
+          <iconpath>/org/yawlfoundation/yawl/editor/resources/taskicons/Manual.png</iconpath>
+          <attributes>
+            <bounds x="732,0" y="384,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <flow source="InputCondition_21" target="null_23">
+          <ports in="13" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <flow source="null_23" target="OutputCondition_22">
+          <ports in="13" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+      </net>
+      <net id="New_Net_3">
+        <bounds x="0" y="0" w="1737" h="700" />
+        <frame x="11" y="33" w="1741" h="704" />
+        <viewport x="0" y="0" w="1741" h="704" />
+        <vertex id="InputCondition_24">
+          <attributes>
+            <bounds x="36,0" y="352,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <vertex id="OutputCondition_25">
+          <attributes>
+            <bounds x="1680,0" y="352,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <vertex id="null_26">
+          <iconpath>/org/yawlfoundation/yawl/editor/resources/taskicons/Manual.png</iconpath>
+          <attributes>
+            <bounds x="708,0" y="384,0" w="32,0" h="32,0" />
+          </attributes>
+        </vertex>
+        <flow source="InputCondition_24" target="null_26">
+          <ports in="13" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+        <flow source="null_26" target="OutputCondition_25">
+          <ports in="13" out="12" />
+          <attributes>
+            <lineStyle>11</lineStyle>
+          </attributes>
+        </flow>
+      </net>
+    </specification>
+  </layout>
+</specificationSet>
+
+

@@ -1,0 +1,40 @@
+digraph {
+	// FREIGHT_DELIVERED
+
+	// Elements
+	t45 [shape=box];
+	t33 [shape=box];
+	t5 [shape=box];
+	t7 [shape=box];
+	t56 [shape=box];
+	t54 [shape=box];
+	t60 [shape=box];
+	c28 [shape=circle][label=O];
+	c5 [shape=circle][label=I];
+
+	// Arrows
+	c5->t60;
+	c5->t5;
+	c5->t45;
+	t45->c28;
+	t45->c5[color=red];
+	c28->t45[color=red];
+	c28->t7[color=red];
+	c28->t54[color=red];
+	c28->t56[color=red];
+	c28->t33[color=red];
+	t5->t7;
+	t5->c5[color=red];
+	t7->t33;
+	t7->c28;
+	t7->t5[color=red];
+	t33->c28;
+	t33->t7[color=red];
+	t60->t54;
+	t60->c5[color=red];
+	t54->t56;
+	t54->c28;
+	t54->t60[color=red];
+	t56->c28;
+	t56->t54[color=red];
+}

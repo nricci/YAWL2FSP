@@ -1,0 +1,38 @@
+digraph {
+	// FREIGHT_IN_TRANSIT
+
+	// Elements
+	t32 [shape=box];
+	t25 [shape=box];
+	t10 [shape=box];
+	t12 [shape=box];
+	t51 [shape=box];
+	c32 [shape=circle];
+	c29 [shape=circle][label=O];
+	c4 [shape=circle];
+	c3 [shape=circle][label=I];
+
+	// Arrows
+	c3->t10;
+	t10->c4;
+	t10->t12;
+	t10->c3[color=red];
+	t12->c32;
+	t12->t10[color=red];
+	t12->c32[color=red];
+	c32->t12;
+	c32->t32;
+	c32->t12[color=red];
+	t32->t25;
+	t32->c32[color=red];
+	t25->c29;
+	t25->c4[color=red];
+	t25->t32[color=red];
+	c29->t25[color=red];
+	c4->t51;
+	c4->t25;
+	c4->t10[color=red];
+	c4->t51[color=red];
+	t51->c4;
+	t51->c4[color=red];
+}
