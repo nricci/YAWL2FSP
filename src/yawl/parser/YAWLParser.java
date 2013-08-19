@@ -21,6 +21,8 @@ public class YAWLParser {
 
 	private File yawl_file;
 	
+	private TranslationInfo t_info;
+	
 	public YAWLParser(String fpath) {
 		yawl_file = new File(fpath);
 	}
@@ -46,11 +48,16 @@ public class YAWLParser {
 			saxParser.parse(this.yawl_file, handler);
 			
 			YSpecification s = handler.builder().buildSpecification();
+			t_info = handler.builder().translation_info();
 			return s;
 			
 		} catch (Exception e) {
 			throw new Exception("Error attempting to parse specification.",e);
 		}
+	}
+	
+	public TranslationInfo get_translation_info() {
+		return t_info;
 	}
 	
 }

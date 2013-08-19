@@ -1,8 +1,13 @@
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.jar.Attributes;
 
+import flwa_to_fsp.FLWAtoFSP;
+import flwa_to_fsp.FLWAtoFSPSingleton;
 import fsp.FSPModel2Dot;
 import fsp.FSPModel2Dot2;
 import fsp.FSPSpecPrinter;
@@ -19,6 +24,7 @@ import yawl.util.YModel2Dot;
 public class YAWL2FSPMain {
  
 	
+	@SuppressWarnings("unchecked")
 	public static void main(String argv[]) {
 		
 		if(argv.length < 1)
@@ -57,11 +63,18 @@ public class YAWL2FSPMain {
 			
 		try {
 			YAWLParser p = new YAWLParser(input);
-		
+					
 			System.out.print("Parsing file: "+input+" ... ");
 			YSpecification s = p.parseSpecification();
-			//YModel2Dot dot = new YModel2Dot("output/");
-			//dot.YSpec2Dot(s);
+			YModel2Dot dot = new YModel2Dot("output/");
+			dot.YSpec2Dot(s);
+			//System.out.println(p.get_translation_info());
+		
+			// Saving translation info for FLWA
+			FLWAtoFSP t_info = FLWAtoFSPSingleton.get_instance();
+			t_info.netsMap = FLWAtoFSP.invert(p.get_translation_info().getNetsMap());
+			t_info.elemsMap = FLWAtoFSP.invert(p.get_translation_info().getElemsMap());
+			
 			System.out.println("Done.");
 			
 			System.out.print("Translating YAWL -> FSP ... ");
@@ -76,7 +89,7 @@ public class YAWL2FSPMain {
 			//dott.translate(fsp);
 			
 			
-			FSPSpecPrinter _p = new FSPSpecPrinter();
+			//FSPSpecPrinter _p = new FSPSpecPrinter();
 			//fsp.accept(_p);
 			//System.out.println(_p.getString());
 			
@@ -90,6 +103,19 @@ public class YAWL2FSPMain {
 			out.close();
 			System.out.println("Done.");
 			
+			//System.out.println(FLWAtoFSPSingleton.get_instance());
+			// Saving translation info for FLWA
+			try
+		      {
+		         FileOutputStream fileOut = new FileOutputStream("flwa2fsp_translation_info");
+		         ObjectOutputStream t_info_out = new ObjectOutputStream(fileOut);
+		         t_info_out.writeObject(FLWAtoFSPSingleton.get_instance());
+		         t_info_out.close();
+		         fileOut.close();
+		      }catch(IOException i)
+		      {
+		          i.printStackTrace();
+		      }
 			
 		} catch (Exception e) {
 			e.printStackTrace();

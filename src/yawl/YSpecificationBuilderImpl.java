@@ -787,7 +787,7 @@ public class YSpecificationBuilderImpl implements YSpecificationBuilder {
 		this.t_info = new TranslationInfo();
 		
 		String _spec = spec.toUpperCase().replace(' ', '_');
-		t_info.getSpecsMap().put(_spec, spec);
+		t_info.getSpecsMap().put(spec, spec);
 		this.spec = _spec;
 		
 		LinkedList<String> _nets = new LinkedList<String>();

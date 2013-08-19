@@ -61,7 +61,15 @@ public class YSpec2FSP implements YSpecVisitor {
 		return this._s;
 	}
 
-	
+	public HashMap<String, String> get_name_translation_map() {
+		HashMap<String, String> res = new HashMap<String, String>();
+		
+		for(YNetElement x : _components.keySet()) {
+			res.put(x.name(), _components.get(x).name());
+		}
+		
+		return res;
+	}
 	
 	@Override
 	public void visit(YSpecification s) {

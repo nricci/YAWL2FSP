@@ -2,13 +2,13 @@ digraph {
 	// RETURN_MANAGEMENT
 
 	// Elements
-	t29 [shape=box];
-	c13 [shape=circle][label=O];
-	c1 [shape=circle][label=I];
+	return_management_4049 [shape=box];
+	inputcondition_4047 [shape=circle][label=I];
+	outputcondition_4048 [shape=circle][label=O];
 
 	// Arrows
-	c1->t29;
-	t29->c13;
-	t29->c1[color=red];
-	c13->t29[color=red];
+	inputcondition_4047->return_management_4049;
+	return_management_4049->outputcondition_4048;
+	return_management_4049->inputcondition_4047[color=red];
+	outputcondition_4048->return_management_4049[color=red];
 }

@@ -2,37 +2,37 @@ digraph {
 	// FREIGHT_IN_TRANSIT
 
 	// Elements
-	t32 [shape=box];
-	t25 [shape=box];
-	t10 [shape=box];
-	t12 [shape=box];
-	t51 [shape=box];
-	c32 [shape=circle];
-	c29 [shape=circle][label=O];
-	c4 [shape=circle];
-	c3 [shape=circle][label=I];
+	log_trackpoint_order_entry_4514 [shape=box];
+	null_815 [shape=box];
+	initiate_shipment_status_inquiry_929 [shape=box];
+	create_acceptance_certificate_814 [shape=box];
+	issue_trackpoint_notice_813 [shape=box];
+	outputcondition_47 [shape=circle][label=O];
+	null_812 [shape=circle];
+	null_4366 [shape=circle];
+	inputcondition_46 [shape=circle][label=I];
 
 	// Arrows
-	c3->t10;
-	t10->c4;
-	t10->t12;
-	t10->c3[color=red];
-	t12->c32;
-	t12->t10[color=red];
-	t12->c32[color=red];
-	c32->t12;
-	c32->t32;
-	c32->t12[color=red];
-	t32->t25;
-	t32->c32[color=red];
-	t25->c29;
-	t25->c4[color=red];
-	t25->t32[color=red];
-	c29->t25[color=red];
-	c4->t51;
-	c4->t25;
-	c4->t10[color=red];
-	c4->t51[color=red];
-	t51->c4;
-	t51->c4[color=red];
+	inputcondition_46->null_815;
+	null_815->issue_trackpoint_notice_813;
+	null_815->null_812;
+	null_815->inputcondition_46[color=red];
+	null_812->initiate_shipment_status_inquiry_929;
+	null_812->create_acceptance_certificate_814;
+	null_812->null_815[color=red];
+	null_812->initiate_shipment_status_inquiry_929[color=red];
+	create_acceptance_certificate_814->outputcondition_47;
+	create_acceptance_certificate_814->null_812[color=red];
+	create_acceptance_certificate_814->log_trackpoint_order_entry_4514[color=red];
+	outputcondition_47->create_acceptance_certificate_814[color=red];
+	initiate_shipment_status_inquiry_929->null_812;
+	initiate_shipment_status_inquiry_929->null_812[color=red];
+	issue_trackpoint_notice_813->null_4366;
+	issue_trackpoint_notice_813->null_815[color=red];
+	issue_trackpoint_notice_813->null_4366[color=red];
+	null_4366->issue_trackpoint_notice_813;
+	null_4366->log_trackpoint_order_entry_4514;
+	null_4366->issue_trackpoint_notice_813[color=red];
+	log_trackpoint_order_entry_4514->create_acceptance_certificate_814;
+	log_trackpoint_order_entry_4514->null_4366[color=red];
 }

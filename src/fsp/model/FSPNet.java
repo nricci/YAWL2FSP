@@ -6,6 +6,10 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import flwa_to_fsp.FLWAtoFSP;
+import flwa_to_fsp.FLWAtoFSPSingleton;
+
+
 public class FSPNet extends FSPComposite {
 
 
@@ -223,6 +227,9 @@ public class FSPNet extends FSPComposite {
 							String link = e.getValue().get_link(z).name();
 							String decomp_start = ((FSPAbstractTask) e.getValue()).decomposesTo().component_by_prefix("ynet").get_link("i_cond").name();
 							s.append("\t" + link + "/" + e.getKey() + "." + decomp_start +",\n");
+							// saving renaming info for FLWA
+							FLWAtoFSP t_info = FLWAtoFSPSingleton.get_instance();
+							t_info.renamesMap.put(e.getKey() + "." + decomp_start, link);
 							mmm.add(link);
 							continue;
 						}
@@ -230,6 +237,9 @@ public class FSPNet extends FSPComposite {
 							String link = e.getValue().get_link(z).name();
 							String decomp_end = ((FSPAbstractTask) e.getValue()).decomposesTo().component_by_prefix("ynet").get_link("o_cond").name();
 							s.append("\t" + link + "/" + e.getKey() + "." + decomp_end +",\n");
+							// saving renaming info for FLWA
+							FLWAtoFSP t_info = FLWAtoFSPSingleton.get_instance();
+							t_info.renamesMap.put(e.getKey() + "." + decomp_end, link);
 							mmm.add(link);
 							continue;
 						}				
@@ -240,6 +250,10 @@ public class FSPNet extends FSPComposite {
 				
 				String link = e.getValue().get_link(z).name();
 				s.append("\t" + link + "/" + e.getKey() + "." + z +",\n");
+				// saving renaming info for FLWA
+				FLWAtoFSP t_info = FLWAtoFSPSingleton.get_instance();
+				t_info.renamesMap.put(e.getKey() + "." + z,link);
+				
 				mmm.add(link);
 			}
 			s.append("\n");

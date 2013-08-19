@@ -2,13 +2,13 @@ digraph {
 	// LOSS_OR_DAMAGE_MANAGEMENT
 
 	// Elements
-	t28 [shape=box];
-	c31 [shape=circle][label=I];
-	c12 [shape=circle][label=O];
+	loss_or_damage_management_4052 [shape=box];
+	inputcondition_4050 [shape=circle][label=I];
+	outputcondition_4051 [shape=circle][label=O];
 
 	// Arrows
-	c31->t28;
-	t28->c12;
-	t28->c31[color=red];
-	c12->t28[color=red];
+	inputcondition_4050->loss_or_damage_management_4052;
+	loss_or_damage_management_4052->outputcondition_4051;
+	loss_or_damage_management_4052->inputcondition_4050[color=red];
+	outputcondition_4051->loss_or_damage_management_4052[color=red];
 }

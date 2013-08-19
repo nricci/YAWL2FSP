@@ -2,34 +2,34 @@ digraph {
 	// ORDERING
 
 	// Elements
-	t47 [shape=box];
-	t49 [shape=box];
-	t27 [shape=box];
-	t16 [shape=box];
-	t57 [shape=box];
-	c21 [shape=circle][label=O];
-	c6 [shape=circle][label=I];
-	c9 [shape=circle];
+	modify_purchase_order_2768 [shape=box];
+	order_timeout_1791 [shape=box];
+	create_purchase_order_104 [shape=box];
+	approve_purchase_order_1901 [shape=box];
+	confirm_purchase_order_2013 [shape=box];
+	null_156 [shape=circle];
+	inputcondition_16 [shape=circle][label=I];
+	outputcondition_17 [shape=circle][label=O];
 
 	// Arrows
-	c6->t49;
-	t49->t16;
-	t49->c6[color=red];
-	t16->c9;
-	t16->c21;
-	t16->t49[color=red];
-	t16->t57[color=red];
-	c21->t16[color=red];
-	c21->t27[color=red];
-	c21->t47[color=red];
-	c9->t47;
-	c9->t57;
-	c9->t27;
-	c9->t16[color=red];
-	t27->c21;
-	t27->c9[color=red];
-	t57->t16;
-	t57->c9[color=red];
-	t47->c21;
-	t47->c9[color=red];
+	inputcondition_16->create_purchase_order_104;
+	create_purchase_order_104->approve_purchase_order_1901;
+	create_purchase_order_104->inputcondition_16[color=red];
+	approve_purchase_order_1901->null_156;
+	approve_purchase_order_1901->outputcondition_17;
+	approve_purchase_order_1901->create_purchase_order_104[color=red];
+	approve_purchase_order_1901->modify_purchase_order_2768[color=red];
+	outputcondition_17->approve_purchase_order_1901[color=red];
+	outputcondition_17->order_timeout_1791[color=red];
+	outputcondition_17->confirm_purchase_order_2013[color=red];
+	null_156->order_timeout_1791;
+	null_156->modify_purchase_order_2768;
+	null_156->confirm_purchase_order_2013;
+	null_156->approve_purchase_order_1901[color=red];
+	confirm_purchase_order_2013->outputcondition_17;
+	confirm_purchase_order_2013->null_156[color=red];
+	modify_purchase_order_2768->approve_purchase_order_1901;
+	modify_purchase_order_2768->null_156[color=red];
+	order_timeout_1791->outputcondition_17;
+	order_timeout_1791->null_156[color=red];
 }

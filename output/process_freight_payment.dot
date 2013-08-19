@@ -2,13 +2,13 @@ digraph {
 	// PROCESS_FREIGHT_PAYMENT
 
 	// Elements
-	t14 [shape=box];
-	c30 [shape=circle][label=I];
-	c10 [shape=circle][label=O];
+	to_be_done_processfreightpayment_30 [shape=box];
+	outputcondition_3886 [shape=circle][label=O];
+	inputcondition_3885 [shape=circle][label=I];
 
 	// Arrows
-	c30->t14;
-	t14->c10;
-	t14->c30[color=red];
-	c10->t14[color=red];
+	inputcondition_3885->to_be_done_processfreightpayment_30;
+	to_be_done_processfreightpayment_30->outputcondition_3886;
+	to_be_done_processfreightpayment_30->inputcondition_3885[color=red];
+	outputcondition_3886->to_be_done_processfreightpayment_30[color=red];
 }

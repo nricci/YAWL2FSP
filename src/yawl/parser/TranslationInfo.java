@@ -89,7 +89,26 @@ public class TranslationInfo {
 		this.elemsMap = elemsMap;
 	}
 	
-	
+	@Override
+	public String toString() {
+		String _sep = " -> ";
+		String res = "";
+		res += "specsMap\n";
+		for(String s : specsMap.keySet()) {
+			res += s + _sep + specsMap.get(s) + "\n";
+		}
+		res += "netsMap\n";
+		for(String s : netsMap.keySet()) {
+			res += s + _sep + netsMap.get(s) + "\n";
+		}
+		res += "elemsMap\n";
+		for(String s : elemsMap.keySet()) {
+			res += s +_sep + elemsMap.get(s) + "\n";
+		}
+		
+		
+		return res;
+	}
 	
 	
 	
