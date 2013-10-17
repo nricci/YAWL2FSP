@@ -39,7 +39,6 @@ public abstract class FSPAbstractTask extends FSPAtom {
 	public void split(FSPSplit n) {
 		this.split = n;
 	}
-	
 
 	@Override
 	public void accept(FSPSpecVisitor v) {

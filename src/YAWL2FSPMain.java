@@ -33,15 +33,20 @@ public class YAWL2FSPMain {
 		
 		File input = null;
 		File output = null;
+		File info_output = null;
 		int max_instances = -1;
 		
 		for(String s : argv) {
 			if(s.startsWith("-")) {
 				/* Parsing flags */
-				if(s.startsWith("-M=")) {
-					max_instances = Integer.parseInt(s.substring(3));
+				if(s.startsWith("--max-inst=")) {
+					max_instances = Integer.parseInt(s.substring(11));
+					continue;
 				}
-				continue;
+				if(s.startsWith("--info=")) {
+					info_output = new File(s.substring(7));
+					continue;
+				}
 			}
 			if(input == null) {
 				input = new  File(s);
@@ -66,8 +71,8 @@ public class YAWL2FSPMain {
 					
 			System.out.print("Parsing file: "+input+" ... ");
 			YSpecification s = p.parseSpecification();
-			YModel2Dot dot = new YModel2Dot("output/");
-			dot.YSpec2Dot(s);
+			//YModel2Dot dot = new YModel2Dot("output/");
+			//dot.YSpec2Dot(s);
 			//System.out.println(p.get_translation_info());
 		
 			// Saving translation info for FLWA
@@ -83,6 +88,7 @@ public class YAWL2FSPMain {
 			YSpec2FSP translator = new YSpec2FSP(s,a);
 			FSPSpecification fsp = translator.translate();
 			System.out.println("Done.");
+			t_info.fsp_spec = fsp;
 			
 			
 			//FSPModel2Dot2 dott = new FSPModel2Dot2("output/fsp/");
@@ -105,17 +111,19 @@ public class YAWL2FSPMain {
 			
 			//System.out.println(FLWAtoFSPSingleton.get_instance());
 			// Saving translation info for FLWA
-			try
-		      {
-		         FileOutputStream fileOut = new FileOutputStream("flwa2fsp_translation_info");
-		         ObjectOutputStream t_info_out = new ObjectOutputStream(fileOut);
-		         t_info_out.writeObject(FLWAtoFSPSingleton.get_instance());
-		         t_info_out.close();
-		         fileOut.close();
-		      }catch(IOException i)
-		      {
-		          i.printStackTrace();
-		      }
+			try {
+				
+				if (!info_output.exists())
+					info_output.createNewFile();
+				
+				FileOutputStream fileOut = new FileOutputStream(info_output);
+				ObjectOutputStream t_info_out = new ObjectOutputStream(fileOut);
+		        t_info_out.writeObject(FLWAtoFSPSingleton.get_instance());
+		        t_info_out.close();
+		        fileOut.close();
+		    } catch (IOException i) {
+		    	i.printStackTrace();
+		    }
 			
 		} catch (Exception e) {
 			e.printStackTrace();

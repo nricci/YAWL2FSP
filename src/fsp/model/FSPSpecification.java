@@ -1,8 +1,14 @@
 package fsp.model;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class FSPSpecification {
+public class FSPSpecification implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String name;
 	

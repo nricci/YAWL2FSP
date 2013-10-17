@@ -1,5 +1,6 @@
 package fsp.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -10,9 +11,7 @@ import flwa_to_fsp.FLWAtoFSP;
 import flwa_to_fsp.FLWAtoFSPSingleton;
 
 
-public class FSPNet extends FSPComposite {
-
-
+public class FSPNet extends FSPComposite  {
 
 	private int link_num;
 	
@@ -229,7 +228,7 @@ public class FSPNet extends FSPComposite {
 							s.append("\t" + link + "/" + e.getKey() + "." + decomp_start +",\n");
 							// saving renaming info for FLWA
 							FLWAtoFSP t_info = FLWAtoFSPSingleton.get_instance();
-							t_info.renamesMap.put(e.getKey() + "." + decomp_start, link);
+							t_info.renamesMap.put(e.getKey() + "." + "start"/*decomp_start*/, link);
 							mmm.add(link);
 							continue;
 						}
@@ -239,7 +238,7 @@ public class FSPNet extends FSPComposite {
 							s.append("\t" + link + "/" + e.getKey() + "." + decomp_end +",\n");
 							// saving renaming info for FLWA
 							FLWAtoFSP t_info = FLWAtoFSPSingleton.get_instance();
-							t_info.renamesMap.put(e.getKey() + "." + decomp_end, link);
+							t_info.renamesMap.put(e.getKey() + "." + "end"/*decomp_end*/, link);
 							mmm.add(link);
 							continue;
 						}				

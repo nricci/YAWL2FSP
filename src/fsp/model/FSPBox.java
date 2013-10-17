@@ -1,12 +1,18 @@
 package fsp.model;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public abstract class FSPBox {
+public abstract class FSPBox implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4009233244662199039L;
 
 	private String name;
 	

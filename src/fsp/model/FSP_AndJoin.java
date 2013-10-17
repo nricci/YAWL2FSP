@@ -1,6 +1,13 @@
 package fsp.model;
 
+import java.io.Serializable;
+
 public class FSP_AndJoin extends FSPJoin {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5542158982620111568L;
 
 	protected final String fsp_name() {	return "AND_JOIN"; }
 	

@@ -1,10 +1,16 @@
 package fsp.model;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FSPLink {
+public class FSPLink implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4396443120662996078L;
+
 	private String name;
 	
 	private List<FSPBox> members;

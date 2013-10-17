@@ -4,9 +4,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.sun.tools.internal.ws.wsdl.document.jaxws.Exception;
+
+import fsp.model.FSPAbstractTask;
+import fsp.model.FSPAtom;
+import fsp.model.FSPNet;
+import fsp.model.FSPSpecification;
 
 /* This class translates names
  * form their original YAWL form to
@@ -39,6 +46,89 @@ public class FLWAtoFSP implements Serializable {
 		
 		String object = name.substring(0, name.indexOf('.'));
 		String event = name.substring(name.indexOf('.') + 1);
+		String _res = "";
+		
+		if(object == null || object.isEmpty())
+			throw new java.lang.Error("The supplied string apears not to have the form <object>.<event>");
+		if(event == null || event.isEmpty())
+			throw new java.lang.Error("The supplied string apears not to have the form <object>.<event>");
+		
+		/*	Maping object YAWL -> FSP
+		 * 
+		*/
+		String _object = null;
+		if(elemsMap.containsKey(object)) {
+			_object = elemsMap.get(object);
+		} else if (netsMap.containsKey(object)) {
+			_object = netsMap.get(object);
+		} else {
+			throw new java.lang.Error("No name mapping could be found for " + object);
+		}
+		assert(_object != null);
+
+		
+		/*	Calculating Net Prefix
+		 * 
+		*/
+		LinkedList<String> _net_prefix = new LinkedList<String>();
+		boolean found = find_object(_object, this.fsp_spec.root(), _net_prefix);
+		assert(found);
+		//System.out.println(_net_prefix);
+		
+		for(String s : _net_prefix)
+			_res += s + "."; 
+		
+		/*	Maping object.event YAWL -> FSP_Link
+		 * 
+		*/		
+		if(renamesMap.containsKey(_object + "." + event)) {
+			_res += renamesMap.get(_object + "." + event);
+		} else {
+			throw new java.lang.Error("No name mapping could be found for " + _object + "." + event);
+		}
+		assert(_res != null);
+			
+		return _res;
+	}
+	
+	
+	private boolean find_object(String name, FSPNet current_net, LinkedList<String> prefix) {
+		boolean found = false;
+		for (Entry<String,FSPAtom> e : current_net.components().entrySet()) {
+			
+			if (e.getValue() instanceof FSPAbstractTask) {
+				FSPAbstractTask t = (FSPAbstractTask) e.getValue();
+				if(t.name().compareTo(name) == 0) {
+					found = true;
+					/*if(t.decomposesTo() != null) {
+						prefix.push(e.getKey());
+					}*/
+					break;
+				} else {
+					if(t.decomposesTo() != null) {
+						prefix.push(e.getKey());
+						if (!find_object(name, t.decomposesTo(), prefix)) {
+							prefix.pop();
+						} else {
+							break;
+						}
+					}					
+				}
+			} else {
+				if (e.getValue().name().compareTo(name) == 0) assert false;
+			}			
+		}
+		return found;
+	}
+	
+	
+	public String fwla_to_fsp_2(String name) {
+		
+		if(name.indexOf('.') == -1)
+			throw new java.lang.Error("The supplied string apears not to have the form <object>.<event>");
+		
+		String object = name.substring(0, name.indexOf('.'));
+		String event = name.substring(name.indexOf('.') + 1);
 		String _res = null;
 		
 		if(object == null || object.isEmpty())
@@ -64,7 +154,12 @@ public class FLWAtoFSP implements Serializable {
 		assert(_res != null);
 			
 		return _res;
-	}
+	}	
+	
+	
+	
+	
+	
 	
 	/* Retrieves an instance of this class from
 	 * the given file. FLWA should use this instead of
@@ -89,7 +184,6 @@ public class FLWAtoFSP implements Serializable {
 	}
 	
 	
-	
 		
 	
 	/*
@@ -97,6 +191,8 @@ public class FLWAtoFSP implements Serializable {
 	 *    API for YAWL2FSP
 	 * 
 	*/
+	
+	public FSPSpecification fsp_spec;
 	
 	/** Net names YAWL -> FSP */
 	public Map<String,String> netsMap;
