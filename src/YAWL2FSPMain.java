@@ -63,6 +63,8 @@ public class YAWL2FSPMain {
 		if(output == null) {
 			output = new  File("output.lts");
 		}			
+
+		
 		
 		
 			
